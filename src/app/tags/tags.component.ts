@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import {MapToIterable, PlaqueService} from '../shared';
+import {PlaqueService} from '../shared';
 import * as d3 from 'd3';
-var cloud;
+declare var cloud: any;
+
 @Component({
   moduleId: 'app/tags',
   selector: 'app-tags',
   templateUrl: 'tags.component.html',
-  styleUrls: ['tags.component.css'],
-  pipes: [MapToIterable]
+  styleUrls: ['tags.component.css']
 })
 export class TagsComponent implements OnInit {
 
