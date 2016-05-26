@@ -3,10 +3,52 @@
  **********************************************************************************************/
 /** Map relative paths to URLs. */
 const map: any = {
+    '@angular2-material': 'vendor/@angular2-material',
+    'ng2-material': 'vendor/ng2-material',
 };
 
 /** User packages configuration. */
 const packages: any = {
+   '@angular2-material/core': {
+        format: 'cjs',
+        defaultExtension: 'js',
+        main: 'core.js'
+    },
+   '@angular2-material/checkbox': {
+        format: 'cjs',
+        defaultExtension: 'js',
+        main: 'checkbox.js'
+    },
+   '@angular2-material/grid-list': {
+        format: 'cjs',
+        defaultExtension: 'js',
+        main: 'grid-list.js'
+    },
+   '@angular2-material/card': {
+        format: 'cjs',
+        defaultExtension: 'js',
+        main: 'card.js'
+    },
+   '@angular2-material/input': {
+        format: 'cjs',
+        defaultExtension: 'js',
+        main: 'input.js'
+    },
+   '@angular2-material/radio': {
+        format: 'cjs',
+        defaultExtension: 'js',
+        main: 'radio.js'
+    },
+    '@angular2-material/toolbar': {
+        format: 'cjs',
+        defaultExtension: 'js',
+        main: 'toolbar.js'
+    },
+    'ng2-material': {
+        format: 'cjs',
+        defaultExtension: 'js',
+        main: 'index.js'
+    }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -29,6 +71,8 @@ const barrels: string[] = [
   // App specific barrels.
   'app',
   'app/shared',
+  'app/tags',
+  'app/plaques',
   /** @cli-barrel */
 ];
 

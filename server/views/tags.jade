@@ -1,0 +1,11 @@
+md-content(layout-padding)
+    div(layout="row")
+        div(ng-repeat="year in vm.years")
+            md-button(ng-click="showYear(year)") {{ year }}
+
+    div(layout="row")
+        div(ng-repeat="word in vm.tags" ng-style="{'font-size': word.count + 'px'}") {{ word.word }}
+
+md-footer
+    | Data provided by 
+    a(href="http://openplaques.org") OpenPlaques

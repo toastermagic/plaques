@@ -1,0 +1,19 @@
+md-dialog(aria-label="Plaque" ng-cloak style="max-width:60%")
+    form
+        md-toolbar
+            .md-toolbar-tools
+                h2(layout="row" layout-align="center center")
+                    | {{ plaque.title }}
+                span(flex)
+                md-button.md-icon-button(ng-click="cancel()")
+                    md-icon close
+        md-dialog-content
+            .md-dialog-content
+                img(ng-src="{{ plaque.thumbnail_url }}" style="height:120px; width:120px")
+
+                .md-subhead {{ plaque.address }}, {{ plaque.area.name }}, {{ plaque.area.country.name }}
+
+                div {{ plaque.inscription }}
+        md-dialog-actions(layout="row")
+            span(flex)
+            md-button(ng-click="cancel()" style="margin-right:20px;") OK
