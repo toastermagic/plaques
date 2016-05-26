@@ -1,3 +1,10 @@
-<p>
-  tags works!
-</p>
+<md-content layout-padding="layout-padding">
+  <div layout="row" *ngIf="years">
+    <div *ngFor="let year of years">
+      <button md-fab (click)="showYear(year)" class="md-raised md-primary">{{ year }}</button>
+    </div>
+  </div>
+  <div layout="row" *ngIf="tags">
+    <div *ngFor="let word of tags">{{ word.word }}</div>
+  </div>
+</md-content>

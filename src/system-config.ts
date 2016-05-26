@@ -5,6 +5,8 @@
 const map: any = {
     '@angular2-material': 'vendor/@angular2-material',
     'ng2-material': 'vendor/ng2-material',
+    'd3':'vendor/d3',
+    'd3-cloud':'vendor/d3-cloud'
 };
 
 /** User packages configuration. */
@@ -48,6 +50,9 @@ const packages: any = {
         format: 'cjs',
         defaultExtension: 'js',
         main: 'index.js'
+    },
+    'd3': {
+        main: 'd3.js'
     }
 };
 

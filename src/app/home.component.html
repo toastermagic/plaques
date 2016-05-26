@@ -8,5 +8,8 @@
     <i md-icon>cake</i>
   </button>
 </md-toolbar>
-<app-plaques></app-plaques>
+<a md-list-item [routerLink]="['home']">home</a>
+<a md-list-item [routerLink]="['tags']">tags</a>
+<router-outlet></router-outlet>
+     
 <md-footer>Data provided by <a href="http://openplaques.org">OpenPlaques</a></md-footer>
