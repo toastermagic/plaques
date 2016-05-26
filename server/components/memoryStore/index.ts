@@ -63,6 +63,7 @@ var MemoryStoreFactory = function (config) {
                 topN: 15,
                 minCount: 1,
                 exclude: [
+                    'plaque',
                     'the',
                     'that',
                     'first',
