@@ -19,6 +19,7 @@ export class TagsComponent implements OnInit {
 
   selectedYear: any;
   years: any;
+  description: string;
 
   constructor(private plaqueService: PlaqueService) {
   }
@@ -46,8 +47,26 @@ export class TagsComponent implements OnInit {
     this.subscription.unsubscribe();
   }
 
+  yearDescription(year) {
+    switch(year){
+      case "1900": return "It's the turn of the last century, essayists, painters and poets are being born and dying";
+      case "1910": return "1910 - 1920, erections are prevalent";
+      case "1920": return "The roaring twenties were mainly characterised by the veneration of bridges";
+      case "1930": return "John and George seem to be popular names";
+      case "1940": return "The 1940s, and a great conflict is commemorated";
+      case "1950": return "Poets, novelists, and statesmen die - while Bristol get's a mention";
+      case "1960": return "Charles, Edward, John, James, Henry, William - what do you have in common?";
+      case "1970": return "The 70s, a close run between architects and painters.";
+      case "1980": return "Manchester was the place to be in the 80s";
+      case "1990": return "The words 'school', 'world' and 'pioneer' all feature for the first time";
+      case "2000": return "A century is celebrated, and the renaissance of Leeds begins";
+      case "2010": return "The most commonly found words on plaques awarded each decade";
+    }
+  }
+
   showYear(year) {
     this.selectedYear = year;
+    this.description = this.yearDescription(year.key);
     let selected = this.data.filter(function (d) { return d.key === year.key; })[0];
 
     var tags = selected.cloud.map(function (d) {
