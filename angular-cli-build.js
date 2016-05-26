@@ -15,6 +15,9 @@ module.exports = function(defaults) {
       '@angular2-material/**/*.+(js|js.map)',
       'ng2-material/**/*.+(js|js.map|css|css.map)',
       'd3*/**/*.+(js|js.map)'
+    ],
+    thirdParty: [
+      'd3-cloud/index.js'
     ]
   });
 };

@@ -92,6 +92,20 @@ gulp.task("injectVendor", ["copyHtml"], function () {
         .pipe(gulp.dest("./dist/wwwroot"));
 });
 
+gulp.task('compile:server', function () {
+    var gtb = require('gulp-typescript-babel');
+    
+    gulp.src('./server/**/*.ts', { base: 'server'})
+         .pipe(gtb(
+             {
+                incremental: true, 
+                configFile: './server/tsconfig.json',
+                reporter: gtb.tsReporter.defaultReporter()
+            }))
+        .pipe(gulp.dest('./dist/server'))
+});
+
+
 gulp.task("ts-babel", function () {
     var babel = require("gulp-babel");
     var rename = require("gulp-rename");
@@ -101,13 +115,13 @@ gulp.task("ts-babel", function () {
  
     // The `base` part is needed so
     //  that `dest()` doesnt map folders correctly after rename
-    return gulp.src(["server/**/*.ts", "!server/typings/**/*"], { base: "./" })
+    return gulp.src(["server/**/*.ts"], { base: "./server" })
         .pipe(ts(tsProject))
         // .pipe(babel({
-            
-        // }, { cwd: 'server' }))
+        //     presets: ['es2015']    
+        // }))
         // .pipe(rename(function (path) {
         //     path.extname = ".js";
         // }))
-        .pipe(gulp.dest("./dist"));
+        .pipe(gulp.dest("./dist/server"));
 });

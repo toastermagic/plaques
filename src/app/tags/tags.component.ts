@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, OnDestroy} from '@angular/core';
 import {PlaqueService} from '../shared';
-import * as d3 from 'd3';
-declare var cloud: any;
+import {Subscription} from 'rxjs';
+
+import * as D3 from 'd3';
+const cloud: any = require('d3-cloud');
 
 @Component({
-  moduleId: 'app/tags',
+  moduleId: 'app/tags/',
   selector: 'app-tags',
   templateUrl: 'tags.component.html',
   styleUrls: ['tags.component.css']
@@ -12,60 +14,106 @@ declare var cloud: any;
 export class TagsComponent implements OnInit {
 
   private data: any;
-  tags: any;
+  private layout: any;
+  private subscription: Subscription;
+
+  selectedYear: any;
   years: any;
-  private fill = d3.scale.category20();
 
   constructor(private plaqueService: PlaqueService) {
   }
 
   ngOnInit() {
-    this.plaqueService
+    this.subscription = this.plaqueService
       .tags()
       .subscribe((data) => {
         this.data = data;
-        this.years = data.map(function (d) { return d.key }).sort();
+        this.years = data.map(function (y) {
+          return y.key;
+        })
+        .sort()
+        .reverse()
+        .map(function (d) {
+          return {
+            key: d,
+            selected: false
+          }
+        });
+        this.showYear(this.years[0]);
       });
   }
 
-  showYear(year) {
-    let selected = this.data.filter(function (d) { return d.key === year; })[0];
-    this.tags = selected.cloud;
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
-  makeCloud() {
+  showYear(year) {
+    this.selectedYear = year;
+    let selected = this.data.filter(function (d) { return d.key === year.key; })[0];
+
+    var tags = selected.cloud.map(function (d) {
+      return { id: d.word, text: d.word, count: d.count };
+    });
+
+    this.makeCloud(tags);
+
     this.layout.start();
   }
 
-  layout = cloud()
-    .size([500, 500])
-    .words([
-      "Hello", "world", "normally", "you", "want", "more", "words",
-      "than", "this"].map(function (d) {
-        return { text: d, size: 10 + Math.random() * 90, test: "haha" };
-      }))
-    .padding(5)
-    .rotate(function () { return ~~(Math.random() * 2) * 90; })
-    .font("Impact")
-    .fontSize(function (d) { return d.size; })
-    .on("end", this.draw);
+  makeCloud(tags) {
+
+    var max = D3.max(tags, function (t: any) { return t.count; });
+    let scale = D3.scale.linear().domain([0, max]).range([10, 100]);
+
+    this.layout = cloud()
+      .size([1000, 500])
+      .words(tags)
+      .padding(5)
+      .rotate(function () { return ~~(Math.random() * 2) * 90; })
+      .font("Impact")
+      .fontSize(function (d) { return Math.floor(scale(d.count)); })
+      .on('end', this.draw)
+  }
 
   draw(words) {
-    d3.select("body").append("svg")
-      .attr("width", this.layout.size()[0])
-      .attr("height", this.layout.size()[1])
-      .append("g")
-      .attr("transform", "translate(" + this.layout.size()[0] / 2 + "," + this.layout.size()[1] / 2 + ")")
+    let fill = D3.scale.category20();
+
+    let data = D3.select("#d3group")
       .selectAll("text")
-      .data(words)
-      .enter().append("text")
+      .data(words, function (w: any) { return w.id; });
+
+    data
+      .transition()
+      .duration(1e3)
       .style("font-size", function (d: any) { return d.size + "px"; })
       .style("font-family", "Impact")
-      .style("fill", function (d, i) { return this.fill(i); })
+      .style("fill", function (d, i) { return fill(i.toString()); })
       .attr("text-anchor", "middle")
       .attr("transform", function (d: any) {
         return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
       })
-      .text(function (d: any) { return d.text; });
+
+    data
+      .enter()
+      .append("text")
+      .style("font-size", function (d: any) { return d.size + "px"; })
+      .style("font-family", "Impact")
+      .style("fill", function (d, i) { return fill(i.toString()); })
+      .style("opacity", "0")
+      .attr("text-anchor", "middle")
+      .attr("transform", function (d: any) {
+        return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+      })
+      .text(function (d: any) { return d.text; })
+      .transition()
+      .duration(0.5e3)
+      .style("opacity", "1");
+
+    data
+      .exit()
+      .transition()
+      .duration(0.5e3)
+      .style("opacity", "0")
+      .remove();
   }
 }

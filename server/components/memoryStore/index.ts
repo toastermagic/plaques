@@ -49,7 +49,10 @@ var MemoryStoreFactory = function (config) {
         },
         tags: function () {
             var tagPlaques = _.filter(plaques, function (p) {
-                if (!p.erected_at)
+                if (!p.erected_at 
+                    || p.erected_at.startsWith('16')
+                    || p.erected_at.startsWith('17')
+                    || p.erected_at.startsWith('18'))
                     return;
 
                 p.erected_at = p.erected_at.substring(0, 3) + '0';
@@ -61,6 +64,8 @@ var MemoryStoreFactory = function (config) {
                 minCount: 1,
                 exclude: [
                     'the',
+                    'that',
+                    'first',
                     'and',
                     'for',
                     'here',
@@ -70,7 +75,14 @@ var MemoryStoreFactory = function (config) {
                     'were',
                     'this',
                     'with',
-                    'who'
+                    'who',
+                    'lived',
+                    'through',
+                    'their',
+                    'these',
+                    'which',
+                    'site'
+                    
                 ]
             });
             

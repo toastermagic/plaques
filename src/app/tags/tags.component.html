@@ -1,10 +1,16 @@
-<md-content layout-padding="layout-padding">
-  <div layout="row" *ngIf="years">
-    <div *ngFor="let year of years">
-      <button md-fab (click)="showYear(year)" class="md-raised md-primary">{{ year }}</button>
+<md-content>
+  <div layout="row">
+    <div layout-align="center center" *ngIf="years">
+      <div *ngFor="let year of years" style="margin:5px;">
+        <button md-fab (click)="showYear(year)" [ngClass]="{'md-primary': year !== selectedYear}" class="md-raised md-mini">
+          <div class="fab-text">{{ year.key }}</div>
+        </button>
+      </div>
     </div>
-  </div>
-  <div layout="row" *ngIf="tags">
-    <div *ngFor="let word of tags">{{ word.word }}</div>
+    <div flex>
+      <svg id="d3svg" width="100%" viewBox="0 0 1000 500">
+        <g id="d3group" transform="translate(500, 250)"></g>
+      </svg>
+    </div>
   </div>
 </md-content>

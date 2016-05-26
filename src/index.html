@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Plaques</title>
+  <title>Datavis</title>
   <base href="/">
 
   {{#unless environment.production}}
@@ -22,6 +22,8 @@
     {{#each scripts.polyfills}}
     <script src="{{.}}"></script>
     {{/each}}
+
+    <script src="vendor/d3-cloud/build/d3.layout.cloud.js"></script>
 
     <script>
       System.import('system-config.js').then(function () {

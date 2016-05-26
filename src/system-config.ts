@@ -6,7 +6,8 @@ const map: any = {
     '@angular2-material': 'vendor/@angular2-material',
     'ng2-material': 'vendor/ng2-material',
     'd3':'vendor/d3',
-    'd3-cloud':'vendor/d3-cloud'
+    'd3-cloud':'vendor/d3-cloud',
+    'd3-dispatch':'vendor/d3-dispatch',
 };
 
 /** User packages configuration. */
@@ -53,6 +54,13 @@ const packages: any = {
     },
     'd3': {
         main: 'd3.js'
+    },
+    'd3-cloud': {
+        format: 'cjs',
+        main: 'build/d3.layout.cloud.js'
+    },
+    'd3-dispatch': {
+        main: 'build/d3-dispatch.js'
     }
 };
 

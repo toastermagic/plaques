@@ -6,7 +6,7 @@ import {Dir} from '@angular2-material/core/rtl/dir';
 import {PlaqueService} from '../shared';
 
 @Component({
-  moduleId: 'app/plaques',
+  moduleId: 'app/plaques/',
   selector: 'app-plaques',
   templateUrl: 'plaques.component.html',
   styleUrls: ['plaques.component.css'],
@@ -18,6 +18,7 @@ export class PlaquesComponent implements OnInit {
   searchTerm: string;
 
   constructor(private plaqueService: PlaqueService) {
+    console.log('plaques contstructed');
   }
 
   ngOnInit() {

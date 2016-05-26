@@ -8,14 +8,16 @@ import {Route, Routes, ROUTER_DIRECTIVES} from '@angular/router';
 @Component({
   moduleId: 'app',
   selector: 'plaques-app',
-  templateUrl: 'home.component.html',
+  templateUrl: 'app/home.component.html',
   styleUrls: ['home.component.css'],
-  directives: [MdIcon, MdToolbar, PlaquesComponent, ROUTER_DIRECTIVES]
+  directives: [MdIcon, MdToolbar, ROUTER_DIRECTIVES]
 })
 @Routes([
   new Route({path:'/home', component: PlaquesComponent}),
   new Route({path:'/tags', component: TagsComponent}),
 ])
 export class HomeComponent {
-  
+  constructor() {
+    console.log('home constructed');
+  }
 }
