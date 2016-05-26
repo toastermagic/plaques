@@ -3,10 +3,12 @@
 # compiled output
 /dist
 /tmp
+/public
 
 # dependencies
 /node_modules
 /bower_components
+/typings
 
 # IDEs and editors
 /.idea
