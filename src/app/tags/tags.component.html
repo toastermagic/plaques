@@ -1,16 +1,17 @@
 <md-content>
-  <div layout="row">
-    <div layout-align="center center" *ngIf="years">
-      <div *ngFor="let year of years" style="margin:5px;">
-        <button md-fab (click)="showYear(year)" [ngClass]="{'md-primary': year !== selectedYear}" class="md-raised md-mini">
-          <div class="fab-text">{{ year.key }}</div>
-        </button>
-      </div>
-    </div>
-    <div flex>
+  <div layout="column">
+    <div class="myFlex">
+      <canvas width="100" height="50"></canvas>
       <svg id="d3svg" width="100%" viewBox="0 0 1000 500">
         <g id="d3group" transform="translate(500, 250)"></g>
       </svg>
+    </div>
+    <div layout="row" layout-align="center start" *ngIf="years" style="overflow-x:auto;">
+      <div *ngFor="let year of years">
+        <button md-fab class="md-raised md-mini" (click)="showYear(year)" [ngClass]="{'md-primary': year !== selectedYear}">
+          <div class="fab-text">{{ year.key }}</div>
+        </button>
+      </div>
     </div>
   </div>
 </md-content>

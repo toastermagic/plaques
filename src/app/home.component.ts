@@ -10,12 +10,12 @@ import {Route, Routes, ROUTER_DIRECTIVES} from '@angular/router';
   selector: 'plaques-app',
   templateUrl: 'app/home.component.html',
   styleUrls: ['home.component.css'],
-  directives: [MdIcon, MdToolbar, ROUTER_DIRECTIVES]
+  directives: [MdIcon, MdToolbar, ROUTER_DIRECTIVES, TagsComponent]
 })
-@Routes([
-  new Route({path:'/home', component: PlaquesComponent}),
-  new Route({path:'/tags', component: TagsComponent}),
-])
+// @Routes([
+//   new Route({path:'/home', component: PlaquesComponent}),
+//   new Route({path:'/tags', component: TagsComponent}),
+// ])
 export class HomeComponent {
   constructor() {
     console.log('home constructed');

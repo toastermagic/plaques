@@ -31,15 +31,14 @@ export class TagsComponent implements OnInit {
         this.years = data.map(function (y) {
           return y.key;
         })
-        .sort()
-        .reverse()
-        .map(function (d) {
-          return {
-            key: d,
-            selected: false
-          }
-        });
-        this.showYear(this.years[0]);
+          .sort()
+          .map(function (d) {
+            return {
+              key: d,
+              selected: false
+            }
+          });
+        this.showYear(this.years[this.years.length - 1]);
       });
   }
 
@@ -70,7 +69,7 @@ export class TagsComponent implements OnInit {
       .words(tags)
       .padding(5)
       .rotate(function () { return ~~(Math.random() * 2) * 90; })
-      .font("Impact")
+      .font("Roboto")
       .fontSize(function (d) { return Math.floor(scale(d.count)); })
       .on('end', this.draw)
   }
@@ -86,9 +85,7 @@ export class TagsComponent implements OnInit {
       .transition()
       .duration(1e3)
       .style("font-size", function (d: any) { return d.size + "px"; })
-      .style("font-family", "Impact")
       .style("fill", function (d, i) { return fill(i.toString()); })
-      .attr("text-anchor", "middle")
       .attr("transform", function (d: any) {
         return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
       })
@@ -97,7 +94,7 @@ export class TagsComponent implements OnInit {
       .enter()
       .append("text")
       .style("font-size", function (d: any) { return d.size + "px"; })
-      .style("font-family", "Impact")
+      .style("font-family", "Roboto")
       .style("fill", function (d, i) { return fill(i.toString()); })
       .style("opacity", "0")
       .attr("text-anchor", "middle")

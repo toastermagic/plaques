@@ -1,24 +1,6 @@
 <md-content layout-fill layout-padding="layout-padding">
   <div layout="column" layout-fill>
-    <md-toolbar>
-      <!--<button md-button aria-label="Settings" class="md-icon-button">
-        <i md-icon>menu</i>
-      </button>-->
-      <!--<h2>OpenPlaques</h2>-->
-
-      <span flex="flex"></span>
-      <!--<a md-fab class="md-mini" title="find a plaque" [routerLink]="['home']">
-        <i md-icon>golf_course</i>
-      </a>-->
-      <a md-fab class="md-mini" title="words on plaques" [routerLink]="['tags']">
-        <i md-icon>pool</i>
-      </a>
-      <button [disabled]="true" title="sorry, no cake yet :(" md-fab aria-label="Like" class="md-mini">
-        <i md-icon>cake</i>
-      </button>
-    </md-toolbar>
-
-    <router-outlet></router-outlet>
+    <app-tags></app-tags>
   </div>
   <md-footer>Data provided by <a href="http://openplaques.org">openplaques.org</a></md-footer>
 </md-content>

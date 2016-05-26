@@ -4,3 +4,20 @@
     left: -1px;
     font-size: smaller;
 }
+
+.myFlex {
+    flex: 1 1 auto !important;
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    visibility: hidden;
+}
+
+svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
