@@ -5,7 +5,22 @@ var config = require('./');
 
 config.watch = false;
 config.output.filename = '[name].[chunkhash:8].js';
-config.devtool = 'hidden-source-map';
+config.output.pathinfo = true;
+config.devtool = 'eval';
+
+config.module.loaders.push({
+  test: /\.html$/,
+  loader: 'html-loader'
+});
+
+config.htmlLoader = {
+  minimize: true,
+  removeAttributeQuotes: false,
+  caseSensitive: true,
+  customAttrSurround: [ [/#/, /(?:)/], [/\*/, /(?:)/], [/\[?\(?/, /(?:)/] ],
+  customAttrAssign: [ /\)?\]?=/ ]
+};
+
 config.plugins.push(
     new webpack.optimize.DedupePlugin(),
     new webpack.optimize.OccurrenceOrderPlugin(true),

@@ -9,8 +9,8 @@ const cloud: any = require('d3-cloud');
 @Component({
   moduleId: 'app/tags/',
   selector: 'sg-tags',
-  templateUrl: 'tags.component.html',
-  styleUrls: ['tags.component.scss']
+  template: require('./tags.component.html'),
+  styles: [require('./tags.component.scss')]
 })
 export class TagsComponent implements OnInit,
     OnDestroy {
@@ -52,7 +52,7 @@ export class TagsComponent implements OnInit,
       case '1950':
         return 'Poets, novelists, and statesmen die - while Bristol get\'s a mention';
       case '1960':
-        return 'Charles, Edward, John, James, Henry, William - what do you have in common?';
+        return 'Writers take top spot in this decade, along with the names of former kings';
       case '1970':
         return 'The 70s, a close run between architects and painters.';
       case '1980':
@@ -62,7 +62,7 @@ export class TagsComponent implements OnInit,
       case '2000':
         return 'A century is celebrated, and the renaissance of Leeds begins';
       case '2010':
-        return 'The most commonly found words on plaques awarded each decade';
+        return 'Since 2010 we have been very proud of our railway system';
     }
   }
 

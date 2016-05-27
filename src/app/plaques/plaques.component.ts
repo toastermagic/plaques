@@ -8,8 +8,8 @@ import {PlaqueService} from '../shared';
 @Component({
   moduleId: 'app/plaques/',
   selector: 'sg-plaques',
-  templateUrl: './plaques.component.html',
-  styleUrls: ['./plaques.component.scss'],
+  template: require('./plaques.component.html'),
+  styles: [require('./plaques.component.scss')],
   directives: [MD_GRID_LIST_DIRECTIVES, MD_INPUT_DIRECTIVES],
   providers: [Dir]
 })
