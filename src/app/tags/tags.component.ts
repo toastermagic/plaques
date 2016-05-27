@@ -56,7 +56,7 @@ export class TagsComponent implements OnInit,
       case '1970':
         return 'The 70s, a close run between architects and painters.';
       case '1980':
-        return 'Manchester was the place to be in the 80s';
+        return 'Manchester was a very popular place to be in the 80s';
       case '1990':
         return 'The words \'school\', \'world\' and \'pioneer\' all feature for the first time';
       case '2000':
