@@ -9,5 +9,5 @@ module.exports = {
             path: "./data/gb_20151004.json"
         }
     },
-    port: process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 4200
+    port: process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 5000
 };

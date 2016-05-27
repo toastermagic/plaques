@@ -1,15 +1,13 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Http, Response} from '@angular/http';
 import {Observable} from 'rxjs/Rx';
 
 @Injectable()
 export class PlaqueService {
-
-  constructor(private http: Http) { }
+  constructor(private http: Http) {}
 
   listPlaques() {
     var url = '/api/plaque/list/';
-    // console.log('Sending request', url);
     return this.http.get(url).map((res: Response) => res.json()).catch(this.handleError);
   }
   tags() {

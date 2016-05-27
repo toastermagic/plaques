@@ -37,7 +37,7 @@ gulp.task("watch:src", ["build:src"], function () {
 
 gulp.task("build:src", ["transformJade", "copyHtml", "copyCss", "injectVendor"]);
 
-gulp.task("build", ["build:ng", "ts-babel"]);
+gulp.task("build", ["ts-babel"]);
 
 gulp.task("compile-ts", function () {
     var sourcemaps = require("gulp-sourcemaps");

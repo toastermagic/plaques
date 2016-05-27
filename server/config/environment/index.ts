@@ -1,6 +1,9 @@
+/// <reference path="../../../typings/main/index.d.ts"/>
+
 'use strict';
 
-var path = require('path');
+import * as path from 'path';
+
 var _ = require('lodash');
 
 function requiredProcessEnv(name) {

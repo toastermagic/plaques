@@ -1,1 +1,1 @@
-export { PlaquesComponent } from './plaques.component';
+export {PlaquesComponent} from './plaques.component';
