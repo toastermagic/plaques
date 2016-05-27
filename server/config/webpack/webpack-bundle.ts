@@ -11,13 +11,13 @@ config.devtool = 'eval';
 //   loader: 'html-loader'
 // });
 
-// config.htmlLoader = {
-//   minimize: true,
-//   removeAttributeQuotes: false,
-//   caseSensitive: true,
-//   customAttrSurround: [ [/#/, /(?:)/], [/\*/, /(?:)/], [/\[?\(?/, /(?:)/] ],
-//   customAttrAssign: [ /\)?\]?=/ ]
-// };
+config.htmlLoader = {
+  minimize: true,
+  removeAttributeQuotes: false,
+  caseSensitive: true,
+  customAttrSurround: [ [/#/, /(?:)/], [/\*/, /(?:)/], [/\[?\(?/, /(?:)/] ],
+  customAttrAssign: [ /\)?\]?=/ ]
+};
 
 config.plugins.push(
     new webpack.optimize.DedupePlugin(),
