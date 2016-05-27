@@ -2,9 +2,9 @@
 
 import * as path from 'path';
 import * as htmlWebpackPlugin from 'html-webpack-plugin';
+import * as copyWebpackPlugin from 'copy-webpack-plugin';
 
 // const webpack = require('webpack');
-// const copyWebpackPlugin = require('copy-webpack-plugin');
 // const definePlugin = require('webpack/lib/definePlugin');
 // const dedupePlugin = require('webpack/lib/optimize/dedupePlugin');
 
@@ -139,9 +139,9 @@ module.exports = {
                 collapseWhitespace: false
             }
         }),
-        // new copyWebpackPlugin([
-        //     // Copy directory contents to {output}/to/directory/ 
-        //     { from: 'node_modules/d3-cloud/build', to: 'stuff' }
-        // ])
+        new copyWebpackPlugin([
+            // Copy directory contents to {output}/to/directory/ 
+            { from: 'node_modules/ng2-material/ng2-material.css', to: 'node_modules/ng2-material' }
+        ])
     ]
 };
