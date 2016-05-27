@@ -11,7 +11,7 @@ export class PlaqueService {
     return this.http.get(url).map((res: Response) => res.json()).catch(this.handleError);
   }
   tags() {
-    var url = 'http://localhost:4999/api/plaque/tags/';
+    var url = '/api/plaque/tags/';
     return this.http.get(url).map((res: Response) => res.json()).catch(this.handleError);
   }
   getPlaques(searchTerm) {
