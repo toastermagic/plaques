@@ -6,7 +6,7 @@
 import * as path from 'path';
 
 // Helper functions
-var _root = path.resolve(__dirname, '..');
+var rootFolder = path.resolve(__dirname, '..');
 
 console.log('root directory:', root());
 
@@ -16,7 +16,7 @@ function hasProcessFlag(flag) {
 
 function root(args?) {
   args = Array.prototype.slice.call(arguments, 0);
-  return path.join.apply(path, [_root].concat(args));
+  return path.join.apply(path, [rootFolder].concat(args));
 }
 
 function rootNode(args) {

@@ -1,14 +1,14 @@
 /// <reference path="../../../typings/main/index.d.ts"/>
 
 import * as path from 'path';
-const webpack = require('webpack');
+import * as htmlWebpackPlugin from 'html-webpack-plugin';
 
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const DefinePlugin = require('webpack/lib/DefinePlugin');
-const DedupePlugin = require('webpack/lib/optimize/DedupePlugin');
+// const webpack = require('webpack');
+// const copyWebpackPlugin = require('copy-webpack-plugin');
+// const definePlugin = require('webpack/lib/definePlugin');
+// const dedupePlugin = require('webpack/lib/optimize/dedupePlugin');
 
-const helpers = require('./helpers');
+// const helpers = require('./helpers');
 
 const METADATA = {
     title: 'datavis',
@@ -32,6 +32,15 @@ module.exports = {
 
             //    if we want to go with the angular2 provided zone + reflect-metadata
             //    'angular2/bundles/angular2-polyfills',
+            'd3-cloud',
+            'ng2-material',
+            '@angular2-material/core',
+            '@angular2-material/checkbox',
+            '@angular2-material/grid-list',
+            '@angular2-material/card',
+            '@angular2-material/input',
+            '@angular2-material/radio',
+            '@angular2-material/toolbar',
 
             'zone.js/dist/zone',
             './src/vendor'
@@ -53,14 +62,14 @@ module.exports = {
         root: path.resolve('./src'),
 
         alias: {
-            'angular2/core': helpers.root('node_modules/@angular/core/index.js'),
-            'angular2/testing': helpers.root('node_modules/@angular/core/testing.js'),
-            '@angular/testing': helpers.root('node_modules/@angular/core/testing.js'),
-            'angular2/platform/browser':
-                helpers.root('node_modules/@angular/platform-browser/index.js'),
-            'angular2/router': helpers.root('node_modules/@angular/router-deprecated/index.js'),
-            'angular2/http': helpers.root('node_modules/@angular/http/index.js'),
-            'angular2/http/testing': helpers.root('node_modules/@angular/http/testing.js')
+            // 'angular2/core': helpers.root('node_modules/@angular/core/index.js'),
+            // 'angular2/testing': helpers.root('node_modules/@angular/core/testing.js'),
+            // '@angular/testing': helpers.root('node_modules/@angular/core/testing.js'),
+            // 'angular2/platform/browser':
+            //     helpers.root('node_modules/@angular/platform-browser/index.js'),
+            // 'angular2/router': helpers.root('node_modules/@angular/router-deprecated/index.js'),
+            // 'angular2/http': helpers.root('node_modules/@angular/http/index.js'),
+            // 'angular2/http/testing': helpers.root('node_modules/@angular/http/testing.js')
         }
     },
 
@@ -117,7 +126,7 @@ module.exports = {
     },
 
     plugins: [
-        new HtmlWebpackPlugin({
+        new htmlWebpackPlugin({
             title: 'datavis',
             chunksSortMode: 'none',
             filename: 'index.html',
@@ -130,9 +139,9 @@ module.exports = {
                 collapseWhitespace: false
             }
         }),
-        new CopyWebpackPlugin([
-            // Copy directory contents to {output}/to/directory/ 
-            { from: 'node_modules/d3-cloud/build', to: 'stuff' }
-        ])
+        // new copyWebpackPlugin([
+        //     // Copy directory contents to {output}/to/directory/ 
+        //     { from: 'node_modules/d3-cloud/build', to: 'stuff' }
+        // ])
     ]
 };

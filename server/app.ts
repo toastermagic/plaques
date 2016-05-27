@@ -1,12 +1,10 @@
 /// <reference path="../typings/main/index.d.ts"/>
 
-var config = require('./config/environment');
-
-import appServer from "./webpack-server";
-import apiServer from "./api-server";
+import appServer from './webpack-server';
+import apiServer from './api-server';
 
 const PORT = process.env.PORT || 5000;
-const PROD = process.env.NODE_ENV === "production";
+const PROD = process.env.NODE_ENV === 'production';
 
 if (PROD) {
   apiServer(PORT);

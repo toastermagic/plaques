@@ -1,6 +1,7 @@
-'use strict';
+/// <reference path="../../../typings/main/index.d.ts"/>
 
-var _ = require('lodash');
+'use strict';
+import * as _ from 'lodash';
 var fs = require('fs');
 var cloud = require('../cloud');
 
@@ -16,21 +17,21 @@ function getSearchKey(obj) {
     return (obj.address + obj.area.name + obj.inscription + obj.title).toLowerCase();
 }
 
-var MemoryStoreFactory = function (config) {
-    var _ready = false;
+export default (path) => {
+    var ready = false;
     var plaques = [];
 
     return {
         connect: function () {
-            if (_ready) {
+            if (ready) {
                 return;
             }
-            _ready = true;
-            console.log('memory store initialising', config.path);
+            ready = true;
+            console.log('memory store initialising', path);
 
-            fs.readFile(config.path, function (err, data) {
+            fs.readFile(path, function (err, data) {
                 console.log('err', err);
-                if (err) throw err;
+                if (err) { throw err; }
                 console.log('data read', data.length, 'bytes');
                 var temp = JSON.parse(data);
                 console.log('data parsed', Object.keys(temp).length);
@@ -49,17 +50,18 @@ var MemoryStoreFactory = function (config) {
         },
         tags: function () {
             var tagPlaques = _.filter(plaques, function (p) {
-                if (!p.erected_at 
+                if (!p.erected_at
                     || p.erected_at.startsWith('16')
                     || p.erected_at.startsWith('17')
-                    || p.erected_at.startsWith('18'))
+                    || p.erected_at.startsWith('18')) {
                     return;
+                }
 
                 p.erected_at = p.erected_at.substring(0, 3) + '0';
                 return p.inscription && p.erected_at;
             });
 
-            var clouds = cloud.cloudThis(tagPlaques, "erected_at", "inscription", {
+            var clouds = cloud.cloudThis(tagPlaques, 'erected_at', 'inscription', {
                 topN: 15,
                 minCount: 1,
                 exclude: [
@@ -83,17 +85,17 @@ var MemoryStoreFactory = function (config) {
                     'these',
                     'which',
                     'site'
-                    
+
                 ]
             });
-            
+
             return Promise.resolve(clouds);
         },
         getById: function (plaqueId) {
             var found = _.find(plaques, { 'id': +plaqueId });
             return Promise.resolve(found);
         },
-        list: function() {
+        list: function () {
 
             var results = [];
             var rowCount = 0;
@@ -109,10 +111,10 @@ var MemoryStoreFactory = function (config) {
                 rowCount++;
                 results.push(candidate);
             }
-            
+
             return Promise.resolve(results);
         },
-        search: function(searchTerm) {
+        search: function (searchTerm) {
 
             var results = [];
             var rowCount = 0;
@@ -127,17 +129,18 @@ var MemoryStoreFactory = function (config) {
             while (rowCount < 50 && candidates.length > 0) {
                 var index = Math.floor(Math.random() * candidates.length);
                 var candidate = candidates.splice(index, 1)[0];
-                if (searchTerm === "" || rowMatch(terms, candidate.SearchKey)) {
+                if (searchTerm === '' || rowMatch(terms, candidate.SearchKey)) {
                     rowCount++;
                     results.push(candidate);
                 }
             }
-            
+
             return Promise.resolve(results);
         },
         stream: function (searchTerm, startCallback, rowCallback, endCallback) {
-            if (searchTerm === null)
+            if (searchTerm === null) {
                 return;
+            }
 
             startCallback();
 
@@ -157,7 +160,7 @@ var MemoryStoreFactory = function (config) {
 
                 var candidate = candidates.splice(index, 1)[0];
 
-                if (searchTerm === "" || rowMatch(terms, candidate.SearchKey)) {
+                if (searchTerm === '' || rowMatch(terms, candidate.SearchKey)) {
                     rowCount++;
                     rowCallback(candidate);
                 }
@@ -168,23 +171,5 @@ var MemoryStoreFactory = function (config) {
                 endCallback({ rowCount: rowCount, total: results.length });
             }
         }
-    }
-}
-
-module.exports = MemoryStoreFactory;
-
-
-            // average characters by year
-            // var wordLists = {};
-            // _.reduce(Object.keys(results), function(avLength, year) {
-            //     var count = 0;
-
-            //     _(results[year]).forEach(function(inscription) {
-            //         count += inscription.length;
-            //     });
-
-            //     avLength[year] = count / results[year].length;
-
-            //     return words;
-            // }, wordLists);
-
+    };
+};

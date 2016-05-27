@@ -11,6 +11,7 @@ if (config.datastore.type === "memoryStore")
     repositoryFactory = require('../sqlStore');   
 }
 
+var config = require('../../config/environment');
 var repo = repositoryFactory(config.datastore.config);
 repo.connect();
 

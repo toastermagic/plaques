@@ -31,7 +31,7 @@ export default (PORT) => {
         noInfo: false,
         contentBase: './src',
         historyApiFallback: true,
-        // inline: true,
+        inline: true,
         watchOptions: {
             aggregateTimeout: 250
         },

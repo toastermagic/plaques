@@ -1,7 +1,10 @@
 'use strict';
 
-var _ = require('lodash');
-var repo = require('../../components/repository');
+import * as _ from 'lodash';
+import * as repositoryFactory from '../../components/memoryStore';
+
+var repo = repositoryFactory.default('./data/gb_20151004.json');
+repo.connect()
 
 exports.search = function(req, res) {
     repo
@@ -13,7 +16,7 @@ exports.search = function(req, res) {
 
 exports.get = function(req, res) {
     repo
-    .list(50)
+    .list()
     .then(function(results) {
         res.json(results);
     });
@@ -29,7 +32,7 @@ exports.show = function(req, res) {
 
 exports.tags = function(req, res) {
     repo
-    .tags(1234, 5678)
+    .tags()
     .then(function(results) {
         res.json(results);
     });

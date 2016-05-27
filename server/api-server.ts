@@ -5,14 +5,14 @@ import * as cookieParser from 'cookie-parser';
 import * as compression from 'compression';
 import * as bodyParser from 'body-parser';
 import * as http from 'http';
-import * as httpProxy from 'http-proxy';
+// import * as httpProxy from 'http-proxy';
 
 export default (PORT) => {
     var app = express();
     var server = http.createServer(app);
-    var proxy = httpProxy.createProxyServer({
-        changeOrigin: true
-    });
+    // var proxy = httpProxy.createProxyServer({
+    //     changeOrigin: true
+    // });
     // view engine setup
     app.set('view engine', 'html');
 
@@ -26,6 +26,13 @@ export default (PORT) => {
 
     console.log('serving static from ', __dirname + '/../wwwroot')
     app.use(express.static(__dirname + '/../wwwroot'));
+
+    app.use(function (req, res, next) {
+        res.header('Access-Control-Allow-Origin', '*');
+        res.header('Access-Control-Allow-Headers',
+            'Origin, X-Requested-With, Content-Type, Accept');
+        next();
+    });
 
     app.use('/api/plaque', require('./api/plaque'));
 
