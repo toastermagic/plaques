@@ -1,6 +1,4 @@
 var webpack = require('webpack');
-var webpackDevServer = require('webpack-dev-server');
-
 var config = require('./');
 
 config.watch = false;
@@ -8,18 +6,18 @@ config.output.filename = '[name].[chunkhash:8].js';
 config.output.pathinfo = true;
 config.devtool = 'eval';
 
-config.module.loaders.push({
-  test: /\.html$/,
-  loader: 'html-loader'
-});
+// config.module.loaders.push({
+//   test: /\.html$/,
+//   loader: 'html-loader'
+// });
 
-config.htmlLoader = {
-  minimize: true,
-  removeAttributeQuotes: false,
-  caseSensitive: true,
-  customAttrSurround: [ [/#/, /(?:)/], [/\*/, /(?:)/], [/\[?\(?/, /(?:)/] ],
-  customAttrAssign: [ /\)?\]?=/ ]
-};
+// config.htmlLoader = {
+//   minimize: true,
+//   removeAttributeQuotes: false,
+//   caseSensitive: true,
+//   customAttrSurround: [ [/#/, /(?:)/], [/\*/, /(?:)/], [/\[?\(?/, /(?:)/] ],
+//   customAttrAssign: [ /\)?\]?=/ ]
+// };
 
 config.plugins.push(
     new webpack.optimize.DedupePlugin(),

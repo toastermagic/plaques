@@ -1,8 +1,8 @@
 /// <reference path="../../../typings/main/index.d.ts"/>
 
 import * as path from 'path';
-import * as htmlWebpackPlugin from 'html-webpack-plugin';
-import * as copyWebpackPlugin from 'copy-webpack-plugin';
+var htmlWebpackPlugin = require('html-webpack-plugin');
+var copyWebpackPlugin = require('copy-webpack-plugin');
 
 // const webpack = require('webpack');
 // const definePlugin = require('webpack/lib/definePlugin');
