@@ -6,7 +6,7 @@
         <g id="d3group" transform="translate(500, 250)"></g>
       </svg>
     </div>
-    <div layout="row" layout-align="center start" *ngIf="years" style="overflow-x:auto;">
+    <div layout="row" layout-align="center start" *ngIf="years" style="overflow-x:auto; padding: 5px">
       <div *ngFor="let year of years">
         <button md-fab class="md-raised md-mini" (click)="showYear(year)" [ngClass]="{'md-primary': year !== selectedYear}">
           <div class="fab-text">{{ year.key }}</div>
