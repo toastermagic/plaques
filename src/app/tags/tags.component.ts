@@ -3,9 +3,8 @@ import {ChangeDetectorRef, ViewChild, ViewEncapsulation,
 import * as D3 from 'd3';
 import {Subscription} from 'rxjs/Subscription';
 import {MD_SIDENAV_DIRECTIVES} from '@angular2-material/sidenav/sidenav';
-import {MdButton} from '@angular2-material/button/button';
 import {HighlightPipe, PlaqueService} from '../shared';
-import {MdIcon} from 'ng2-material';
+import {MATERIAL_DIRECTIVES} from 'ng2-material';
 import * as _ from 'lodash';
 
 const cloud: any = require('d3-cloud');
@@ -16,7 +15,7 @@ const cloud: any = require('d3-cloud');
   template: require('./tags.component.html'),
   styles: [require('./tags.component.scss')],
   pipes: [HighlightPipe],
-  directives: [MD_SIDENAV_DIRECTIVES, MdIcon, MdButton],
+  directives: [MATERIAL_DIRECTIVES, MD_SIDENAV_DIRECTIVES],
   encapsulation: ViewEncapsulation.None
 })
 export class TagsComponent implements OnInit, OnDestroy {
