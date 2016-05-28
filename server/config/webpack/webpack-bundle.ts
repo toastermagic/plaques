@@ -40,7 +40,7 @@ config.plugins.push(
     }),
     new webpack.DefinePlugin({
         'process.env': {
-            'API_URL_PREFIX': ''
+            'API_URL_PREFIX': JSON.stringify('')
         }
     })
 );
