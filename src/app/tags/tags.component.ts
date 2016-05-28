@@ -117,7 +117,8 @@ export class TagsComponent implements OnInit, OnDestroy {
       return { id: d.word, text: d.word, count: d.count };
     });
     var max = D3.max(tags, function (t: any) { return t.count; });
-    let scale = D3.scale.linear().domain([0, max]).range([10, 120]);
+    var maxFont = (window.innerWidth / 1600) * 120;
+    let scale = D3.scale.linear().domain([0, max]).range([10, maxFont]);
 
     this.layout = cloud()
       .size([this.canvasWidth, this.canvasHeight])
