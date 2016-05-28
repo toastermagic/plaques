@@ -11,22 +11,29 @@ export default (PORT) => {
     config.plugins.push(
         new webpack
             .optimize
-            .CommonsChunkPlugin({ name: 'vendor', filename: 'vendor.js', minChunks: Infinity })
+            .CommonsChunkPlugin({ name: 'vendor', filename: 'vendor.js', minChunks: Infinity }),
+        new webpack.DefinePlugin({
+            'process.env': {
+                'API_URL_PREFIX': JSON.stringify('http://localhost:4999')
+            }
+        })
     );
 
     const frontServer = new webpackDevServer(webpack(config), {
-        proxy: {
-            '/api/*': {
-                target: {
-                    'host': 'localhost',
-                    'protocol': 'http',
-                    'port': (PORT - 1)
-                },
-                secure: false,
-                ignorePath: true,
-                changeOrigin: true
-            }
-        },
+        proxy: [{
+            path: '/api*',
+            target: 'http://localhost:4999'
+            // '/api*': {
+            //     target: {
+            //         'host': 'localhost',
+            //         'protocol': 'http',
+            //         'port': (PORT - 1)
+            //     },
+            //     secure: false,
+            //     ignorePath: true,
+            //     changeOrigin: true
+            // }
+        }],
         quiet: false,
         noInfo: false,
         contentBase: './src',

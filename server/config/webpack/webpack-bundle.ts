@@ -11,13 +11,13 @@ config.devtool = 'eval';
 //   loader: 'html-loader'
 // });
 
-config.htmlLoader = {
-  minimize: true,
-  removeAttributeQuotes: false,
-  caseSensitive: true,
-  customAttrSurround: [ [/#/, /(?:)/], [/\*/, /(?:)/], [/\[?\(?/, /(?:)/] ],
-  customAttrAssign: [ /\)?\]?=/ ]
-};
+// config.htmlLoader = {
+//   minimize: true,
+//   removeAttributeQuotes: false,
+//   caseSensitive: true,
+//   customAttrSurround: [ [/#/, /(?:)/], [/\*/, /(?:)/], [/\[?\(?/, /(?:)/] ],
+//   customAttrAssign: [ /\)?\]?=/ ]
+// };
 
 config.plugins.push(
     new webpack.optimize.DedupePlugin(),
@@ -36,7 +36,12 @@ config.plugins.push(
         beautify: false,
         mangle: { screw_ie8: true },
         compress: { screw_ie8: true },
-        comments: false
+        comments: false,
+    }),
+    new webpack.DefinePlugin({
+        'process.env': {
+            'API_URL_PREFIX': ''
+        }
     })
 );
 

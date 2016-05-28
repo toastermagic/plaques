@@ -1,11 +1,10 @@
 /// <reference path="../../../typings/main/index.d.ts"/>
 
 import * as path from 'path';
+// const webpack = require('webpack');
 var htmlWebpackPlugin = require('html-webpack-plugin');
 var copyWebpackPlugin = require('copy-webpack-plugin');
-
-// const webpack = require('webpack');
-// const definePlugin = require('webpack/lib/definePlugin');
+const definePlugin = require('webpack/lib/definePlugin');
 // const dedupePlugin = require('webpack/lib/optimize/dedupePlugin');
 
 // const helpers = require('./helpers');
@@ -34,7 +33,7 @@ module.exports = {
             //    'angular2/bundles/angular2-polyfills',
             'd3-cloud',
             'ng2-material',
-            '@angular2-material/button',
+            // '@angular2-material/button',
             '@angular2-material/core',
             '@angular2-material/checkbox',
             '@angular2-material/grid-list',
