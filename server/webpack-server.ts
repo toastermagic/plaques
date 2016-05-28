@@ -13,9 +13,7 @@ export default (PORT) => {
             .optimize
             .CommonsChunkPlugin({ name: 'vendor', filename: 'vendor.js', minChunks: Infinity }),
         new webpack.DefinePlugin({
-            'process.env': {
-                'API_URL_PREFIX': JSON.stringify('http://localhost:4999')
-            }
+            'API_URL_PREFIX': JSON.stringify('http://localhost:4999')
         })
     );
 

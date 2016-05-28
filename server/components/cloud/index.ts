@@ -30,7 +30,7 @@ module.exports = {
 
         _(results).forEach(function (r) {
             r.cloud = _(Object.keys(r.cloud))
-                .filter(function(w) { return exclude.indexOf(w) ===-1; })
+                .filter(function(w) { return exclude.indexOf(w) === -1; })
                 .filter(function(w) { return r.cloud[w].length > minCount; })
                 .sortBy(function (w) { return r.cloud[w].length * -1; })
                 .map(function(w) {

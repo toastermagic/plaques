@@ -6,7 +6,7 @@ import {Observable} from 'rxjs/Rx';
 export class PlaqueService {
   constructor(private http: Http) {}
 
-  prefix: string = process.env.API_URL_PREFIX;
+  prefix: string = API_URL_PREFIX;
 
   listPlaques() {
     var url = this.prefix + '/api/plaque/list/';
