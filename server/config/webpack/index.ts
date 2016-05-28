@@ -4,7 +4,6 @@ import * as path from 'path';
 // const webpack = require('webpack');
 var htmlWebpackPlugin = require('html-webpack-plugin');
 var copyWebpackPlugin = require('copy-webpack-plugin');
-const definePlugin = require('webpack/lib/definePlugin');
 // const dedupePlugin = require('webpack/lib/optimize/dedupePlugin');
 
 // const helpers = require('./helpers');

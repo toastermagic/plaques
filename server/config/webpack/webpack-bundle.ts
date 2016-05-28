@@ -1,6 +1,5 @@
 var webpack = require('webpack');
 var config = require('./');
-const definePlugin = require('webpack/lib/definePlugin');
 
 config.watch = false;
 config.output.filename = '[name].[chunkhash:8].js';
@@ -39,7 +38,7 @@ config.plugins.push(
         compress: { screw_ie8: true },
         comments: false,
     }),
-    new definePlugin({
+    new webpack.DefinePlugin({
         'process.env': {
             'API_URL_PREFIX': ''
         }
