@@ -35,7 +35,7 @@ function keyDescription(key) {
         case '1960':
             return 'Writers take top spot in this decade, along with the names of former kings';
         case '1970':
-            return 'The 70s, a close run between architects and painters.';
+            return 'The 70s: architects, painters, and men named John.';
         case '1980':
             return 'Manchester was a very popular place to be in the 80s';
         case '1990':

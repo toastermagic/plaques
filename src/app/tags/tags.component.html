@@ -2,22 +2,20 @@
   <i md-icon>menu</i>
 </button>
 <md-sidenav-layout>
-  <md-sidenav #sidebar mode="side">
-    <div layout="column" layout-fill layout-align="start center" style="background: rgba(200,200,200,0.2)">
-      <div layout-padding style="width:350px; height:100%; padding-top:50px;">
-        <div *ngIf="plaque" layout-fill layout="column" layout-align="end end">
-          <div layout="row" layout-align="end end" style="min-height:120px">
-            <h4 style="flex; text-align:center">{{ plaque.erected_at }} - {{ plaque.title }}</h4>
-            <img class="plaqueThumb" src="{{ plaque.thumbnail_url }}" />
-          </div>
-          <div style="flex: 1 1 auto; margin-top:10px; overflow-y:auto" [innerHtml]="highlit(plaque.inscription)"></div>
+  <md-sidenav #sidebar mode="side" style="width:350px; background: rgba(200,200,200,0.2)">
+    <div layout="column" layout-padding layout-align="start center">
+      <div *ngIf="plaque" layout="column" layout-padding layout-align="end center">
+        <div layout="row" layout-align="end end" style="min-height:120px">
+          <h4>{{ plaque.erected_at }} - {{ plaque.title }}</h4>
+          <img class="plaqueThumb" src="{{ plaque.thumbnail_url }}" />
         </div>
-        <div *ngIf="!plaque">
-          Click a word to find a plaque
-        </div>
+        <div style="flex: 1 1 auto; margin-top:10px; overflow-y:auto" [innerHtml]="highlit(plaque.inscription)"></div>
+      </div>
+      <div *ngIf="!plaque">
+        Click a word to find a plaque
       </div>
       <div style="flex: 1 1 auto"></div>
-      <div style="flex: 1 1 auto; font-size:smaller;">data provided by <a href="http://openplaques.org">openplaques.org</a></div>
+      <div style="font-size:smaller;">data provided by <a href="http://openplaques.org">openplaques.org</a></div>
     </div>
   </md-sidenav>
   <md-content layout="column" layout-fill style="overflow:hidden">

@@ -67,7 +67,6 @@ export class TagsComponent implements OnInit, OnDestroy {
   ngOnDestroy() { this.subscription.unsubscribe(); }
 
   setPanelSize() {
-    console.log('panel size', window.innerWidth, window.innerHeight);
     this.canvasHeight = window.innerHeight - 80;
     this.canvasWidth = window.innerWidth - (this.barOpen ? 350 : 0);
   }
@@ -83,10 +82,13 @@ export class TagsComponent implements OnInit, OnDestroy {
     this.barOpen = !this.barOpen;
     this.setPanelSize();
     if (this.barOpen) {
-      this.sidebar.open().then(this.showYear(this.selectedYear));
+      this.sidebar.open(); // .then(this.showYear(this.selectedYear));
     } else {
-      this.sidebar.close().then(this.showYear(this.selectedYear));
+      this.sidebar.close(); // .then(this.showYear(this.selectedYear));
     }
+    setTimeout(() => {
+      this.showYear(this.selectedYear);
+    }, 500);
   }
 
   showRandomPlaque(word, year) {
@@ -103,7 +105,7 @@ export class TagsComponent implements OnInit, OnDestroy {
   showYear(year) {
     this.selectedYear = year;
     this.makeCloud(year);
-    // this.showRandomPlaque(year.cloud[0].word, year);
+    this.plaque = null;
 
     this.layout.start();
   }
@@ -115,12 +117,12 @@ export class TagsComponent implements OnInit, OnDestroy {
       return { id: d.word, text: d.word, count: d.count };
     });
     var max = D3.max(tags, function (t: any) { return t.count; });
-    let scale = D3.scale.linear().domain([0, max]).range([20, 150]);
+    let scale = D3.scale.linear().domain([0, max]).range([10, 120]);
 
     this.layout = cloud()
       .size([this.canvasWidth, this.canvasHeight])
       .words(tags)
-      .padding(15)
+      .padding(10)
       .rotate(function () { return Math.random() > 0.5 ? 90 : 0; })
       .font('Roboto')
       .fontSize(function (d) { return Math.floor(scale(d.count)); })
