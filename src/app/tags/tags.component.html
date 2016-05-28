@@ -5,7 +5,7 @@
   <md-sidenav #sidebar mode="side" style="width:350px; background: rgba(200,200,200,0.2)">
     <div layout="column" layout-padding layout-align="start center">
       <div *ngIf="plaque" layout="column" layout-padding layout-align="end center">
-        <div layout="row" layout-align="end end" style="min-height:120px">
+        <div layout="row" layout-align="end end" style="min-height:120px; margin-top:50px">
           <h4>{{ plaque.erected_at }} - {{ plaque.title }}</h4>
           <img class="plaqueThumb" src="{{ plaque.thumbnail_url }}" />
         </div>
