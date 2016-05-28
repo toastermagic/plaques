@@ -5,6 +5,7 @@ module.exports = {
         let exclude = options.exclude || [];
         let topN = options.topN || 50;
         let minCount = options.minCount || 1;
+        let descFinder = options.descriptions || function(){ return null; };
 
         // text by key
         var results = _.reduce(objectList, function (clouds, obj) {
@@ -19,7 +20,8 @@ module.exports = {
 
                 clouds.push({
                     key: objKey,
-                    cloud: newCloud
+                    cloud: newCloud,
+                    description: descFinder(objKey)
                 });
             }
 

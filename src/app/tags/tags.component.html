@@ -1,33 +1,30 @@
-<button md-icon-button (click)="start.toggle()" style="position:absolute; top:20px; left:20px; color: rgba(200,200,200,0.7); z-index:9999">
+<button md-icon-button class="md-raised" (click)="toggleSidebar()" title="Show Plaque Info" style="position:absolute; top:10px; left:10px; color: rgba(200,200,200,0.8); z-index:9999">
   <i md-icon>menu</i>
 </button>
 <md-sidenav-layout>
-  <md-sidenav #start mode="side">
-    <style>
-      .myHighlight {
-        color: white;
-      }
-    </style>
+  <md-sidenav #sidebar mode="side">
     <div layout="column" layout-fill layout-align="start center" style="background: rgba(200,200,200,0.2)">
-      <div layout-padding style="width:300px;">
-        <div *ngIf="plaque" layout="column" layout-align="center center">
-          <div>
-            <h2 style="text-align:center">{{ plaque.erected_at }} - {{ plaque.title }}</h2>
+      <div layout-padding style="width:300px; height:100%">
+        <div *ngIf="plaque" layout-fill layout="column" layout-align="end end">
+          <div layout="row" layout-align="end end" style="min-height:120px">
+            <h4 style="flex; text-align:center">{{ plaque.erected_at }} - {{ plaque.title }}</h4>
             <img class="plaqueThumb" src="{{ plaque.thumbnail_url }}" />
           </div>
-          <div style="overflow-y:auto" [innerHtml]="highlit(plaque.inscription)"></div>
+          <div style="flex: 1 1 auto; margin-top:10px; overflow-y:auto" [innerHtml]="highlit(plaque.inscription)"></div>
         </div>
       </div>
+      <div style="flex: 1 1 auto"></div>
+      <div style="flex: 1 1 auto; font-size:smaller;">data provided by <a href="http://openplaques.org">openplaques.org</a></div>
     </div>
   </md-sidenav>
-  <md-content layout="column" layout-fill>
+  <md-content layout="column" layout-fill style="overflow:hidden">
     <div layout="row">
       <div style="flex: 1 1 auto; position:relative" layout-align="center start">
-        <div layout="column" layout-fill>
-          <canvas width="100" height="50"></canvas>
-          <svg id="d3svg" width="100%" viewBox="0 0 1000 500">
-          <g id="d3group" transform="translate(500, 250)"></g>
-        </svg>
+        <div layout="column" layout-fill style="overflow:hidden" onselectstart="return false">
+          <canvas width="{{ canvasWidth }}" height="{{ canvasHeight }}"></canvas>
+          <svg id="d3svg" [attr.width]="canvasWidth" [attr.height]="canvasHeight" [attr.viewBox]="'0 0 ' + canvasWidth + ' ' + canvasHeight">
+            <g id="d3group" [attr.transform]="'translate(' + canvasWidth / 2 + ' ' + canvasHeight / 2 + ')'"></g>
+          </svg>
           <div layout="row" layout-align="center start" *ngIf="years" style="overflow-x:auto; padding: 5px">
             <div *ngFor="let year of years">
               <button md-fab class="md-raised md-mini" style="margin:0 5px;" (click)="showYear(year)" [ngClass]="{'md-primary': year !== selectedYear}">
@@ -38,8 +35,8 @@
         </div>
       </div>
     </div>
-    <div layout="row" layout-align="center" style="margin-top:10px">
-      {{ description }}
+    <div layout="row" layout-align="center" style="margin-top:10px" *ngIf="selectedYear">
+      {{ selectedYear.description }}
     </div>
   </md-content>
 </md-sidenav-layout>

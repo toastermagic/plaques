@@ -1,4 +1,5 @@
-import {ViewEncapsulation, Component, OnInit, OnDestroy} from '@angular/core';
+import {ChangeDetectorRef, ViewChild, ViewEncapsulation,
+  Component, OnInit, OnDestroy} from '@angular/core';
 import * as D3 from 'd3';
 import {Subscription} from 'rxjs/Subscription';
 import {MD_SIDENAV_DIRECTIVES} from '@angular2-material/sidenav/sidenav';
@@ -23,13 +24,35 @@ export class TagsComponent implements OnInit, OnDestroy {
   private layout: any;
   private subscription: Subscription;
 
+  @ViewChild('sidebar') sidebar;
+
   selectedYear: any;
   selectedWord: string;
   years: any;
   description: string;
   plaque: any;
+  canvasWidth: number = 100;
+  canvasHeight: number = 50;
+  barOpen: boolean = false;
 
-  constructor(private plaqueService: PlaqueService) { }
+  constructor(
+    private plaqueService: PlaqueService,
+    private cdr: ChangeDetectorRef) {
+
+    window.onresize = () => {
+      this.onResize(() => {
+        this.setPanelSize();
+      });
+    };
+  }
+
+  onResize = (c, t?) => {
+    onresize = function () {
+      clearTimeout(t);
+      t = setTimeout(c, 100);
+    };
+    return c;
+  };
 
   ngOnInit() {
     this.subscription = this.plaqueService.tags().subscribe((data) => {
@@ -37,19 +60,37 @@ export class TagsComponent implements OnInit, OnDestroy {
       this.years = _.sortBy(data, 'key');
       this.showYear(this.years[this.years.length - 1]);
     });
+
+    this.setPanelSize();
   }
 
   ngOnDestroy() { this.subscription.unsubscribe(); }
 
+  setPanelSize() {
+    console.log('panel size', window.innerWidth, window.innerHeight);
+    this.canvasHeight = window.innerHeight - 80;
+    this.canvasWidth = window.innerWidth - (this.barOpen ? 300 : 0);
+    this.cdr.detectChanges();
+  }
+
   highlit(text) {
     text = text.replace(
-            new RegExp('(' + this.selectedWord + ')', 'gi'),
-            '<span class="myHighlight">$1</span>');
+      new RegExp('(' + this.selectedWord + ')', 'gi'),
+      '<span class="myHighlight">$1</span>');
     return text;
   }
 
+  toggleSidebar() {
+    this.barOpen = !this.barOpen;
+    if (this.barOpen) {
+      this.sidebar.open();
+    } else {
+      this.sidebar.close();
+    }
+    this.setPanelSize();
+  }
+
   showRandomPlaque(word, year) {
-    console.log('finding a random', word, 'from', year.key);
     this.selectedWord = word;
     let list = year.cloud.filter(function (d) { return d.word === word; })[0];
     let randIndex = Math.floor(Math.random() * list.plaques.length);
@@ -58,28 +99,28 @@ export class TagsComponent implements OnInit, OnDestroy {
     this.plaqueService.getPlaque(pickId).subscribe((plaque) => {
       this.plaque = plaque;
     });
-    console.log('the pick', pickId);
   }
 
   showYear(year) {
     console.log(year);
     this.selectedYear = year;
-    this.description = this.yearDescription(year.key);
     this.makeCloud(year);
+    this.showRandomPlaque(year.cloud[0].word, year);
 
     this.layout.start();
   }
 
   makeCloud(year) {
     let tags = year.cloud.map(function (d) {
-      return { id: d.word, text: d.word, count: d.count }; });
+      return { id: d.word, text: d.word, count: d.count };
+    });
     var max = D3.max(tags, function (t: any) { return t.count; });
-    let scale = D3.scale.linear().domain([0, max]).range([10, 100]);
+    let scale = D3.scale.linear().domain([0, max]).range([20, 150]);
 
     this.layout = cloud()
-      .size([1000, 500])
+      .size([this.canvasWidth, this.canvasHeight])
       .words(tags)
-      .padding(5)
+      .padding(15)
       .rotate(function () { return Math.random() > 0.5 ? 90 : 0; })
       .font('Roboto')
       .fontSize(function (d) { return Math.floor(scale(d.count)); })
@@ -103,6 +144,7 @@ export class TagsComponent implements OnInit, OnDestroy {
       .append('text')
       .style('font-size', function (d: any) { return d.size + 'px'; })
       .style('font-family', 'Roboto')
+      .style('cursor', 'pointer')
       .style('fill', function (d, i) { return fill(i.toString()); })
       .style('opacity', '0')
       .attr('text-anchor', 'middle')
@@ -118,35 +160,5 @@ export class TagsComponent implements OnInit, OnDestroy {
       .style('opacity', '1');
 
     data.exit().transition().duration(0.5e3).style('opacity', '0').remove();
-  }
-
-  yearDescription(year) {
-    switch (year) {
-      case '1900':
-        return 'It\'s the turn of the last century, essayists, painters ' +
-          'and poets are being born and dying';
-      case '1910':
-        return '1910 - 1920, erections are prevalent';
-      case '1920':
-        return 'The roaring twenties were mainly characterised by the veneration of bridges';
-      case '1930':
-        return 'John and George seem to be popular names';
-      case '1940':
-        return 'The 1940s, and a great conflict is commemorated';
-      case '1950':
-        return 'Poets, novelists, and statesmen die - while Bristol get\'s a mention';
-      case '1960':
-        return 'Writers take top spot in this decade, along with the names of former kings';
-      case '1970':
-        return 'The 70s, a close run between architects and painters.';
-      case '1980':
-        return 'Manchester was a very popular place to be in the 80s';
-      case '1990':
-        return 'The words \'school\', \'world\' and \'pioneer\' all feature for the first time';
-      case '2000':
-        return 'A century is celebrated, and the renaissance of Leeds begins';
-      case '2010':
-        return 'Since 2010 we have been very proud of our railway system';
-    }
   }
 }

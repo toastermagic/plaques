@@ -17,6 +17,36 @@ function getSearchKey(obj) {
     return (obj.address + obj.area.name + obj.inscription + obj.title).toLowerCase();
 }
 
+function keyDescription(key) {
+    switch (key) {
+        case '1900':
+            return 'It\'s the turn of the last century, essayists, painters ' +
+                'and poets are being born and dying';
+        case '1910':
+            return '1910 - 1920, erections are prevalent';
+        case '1920':
+            return 'The roaring twenties were mainly characterised by the veneration of bridges';
+        case '1930':
+            return 'John and George seem to be popular names';
+        case '1940':
+            return 'The 1940s, and a great conflict is commemorated';
+        case '1950':
+            return 'Poets, novelists, and statesmen die - while Bristol get\'s a mention';
+        case '1960':
+            return 'Writers take top spot in this decade, along with the names of former kings';
+        case '1970':
+            return 'The 70s, a close run between architects and painters.';
+        case '1980':
+            return 'Manchester was a very popular place to be in the 80s';
+        case '1990':
+            return 'The words \'school\', \'world\' and \'pioneer\' all feature for the first time';
+        case '2000':
+            return 'A century is celebrated, and the renaissance of Leeds begins';
+        case '2010':
+            return 'Since 2010 we have been very proud of our railway system';
+    }
+}
+
 export default (path) => {
     var ready = false;
     var plaques = [];
@@ -57,11 +87,11 @@ export default (path) => {
                     return;
                 }
 
-                p.erected_at = p.erected_at.substring(0, 3) + '0';
+                p.erected_at_decade = p.erected_at.substring(0, 3) + '0';
                 return p.inscription && p.erected_at;
             });
 
-            var clouds = cloud.cloudThis(tagPlaques, 'id', 'erected_at', 'inscription', {
+            var clouds = cloud.cloudThis(tagPlaques, 'id', 'erected_at_decade', 'inscription', {
                 topN: 15,
                 minCount: 1,
                 exclude: [
@@ -84,9 +114,9 @@ export default (path) => {
                     'their',
                     'these',
                     'which',
-                    'site'
-
-                ]
+                    'site',
+                ],
+                descriptions: keyDescription
             });
 
             return Promise.resolve(clouds);
