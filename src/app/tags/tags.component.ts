@@ -41,6 +41,7 @@ export class TagsComponent implements OnInit, OnDestroy {
     window.onresize = () => {
       this.onResize(() => {
         this.setPanelSize();
+        this.showYear(this.selectedYear);
       });
     };
   }
@@ -68,8 +69,7 @@ export class TagsComponent implements OnInit, OnDestroy {
   setPanelSize() {
     console.log('panel size', window.innerWidth, window.innerHeight);
     this.canvasHeight = window.innerHeight - 80;
-    this.canvasWidth = window.innerWidth - (this.barOpen ? 300 : 0);
-    this.cdr.detectChanges();
+    this.canvasWidth = window.innerWidth - (this.barOpen ? 350 : 0);
   }
 
   highlit(text) {
@@ -81,12 +81,12 @@ export class TagsComponent implements OnInit, OnDestroy {
 
   toggleSidebar() {
     this.barOpen = !this.barOpen;
-    if (this.barOpen) {
-      this.sidebar.open();
-    } else {
-      this.sidebar.close();
-    }
     this.setPanelSize();
+    if (this.barOpen) {
+      this.sidebar.open().then(this.showYear(this.selectedYear));
+    } else {
+      this.sidebar.close().then(this.showYear(this.selectedYear));
+    }
   }
 
   showRandomPlaque(word, year) {
@@ -101,15 +101,16 @@ export class TagsComponent implements OnInit, OnDestroy {
   }
 
   showYear(year) {
-    console.log(year);
     this.selectedYear = year;
     this.makeCloud(year);
-    this.showRandomPlaque(year.cloud[0].word, year);
+    // this.showRandomPlaque(year.cloud[0].word, year);
 
     this.layout.start();
   }
 
-  makeCloud(year) {
+  makeCloud(year?) {
+    year = year || this.selectedYear;
+
     let tags = year.cloud.map(function (d) {
       return { id: d.word, text: d.word, count: d.count };
     });
@@ -131,7 +132,9 @@ export class TagsComponent implements OnInit, OnDestroy {
     let data =
       D3.select('#d3group').selectAll('text').data(words, function (w: any) { return w.id; });
 
-    data.transition().duration(1e3).style('font-size', function (d: any) {
+    data
+    .on('click', (clickedWord) => { this.showRandomPlaque(clickedWord.id, year); })
+    .transition().duration(1e3).style('font-size', function (d: any) {
       return d.size + 'px';
     }).style('fill', function (d, i) {
       return fill(i.toString());
