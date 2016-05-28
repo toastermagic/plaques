@@ -1,8 +1,10 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
+import {ViewEncapsulation, Component, OnInit, OnDestroy} from '@angular/core';
 import * as D3 from 'd3';
 import {Subscription} from 'rxjs/Subscription';
-
-import {PlaqueService} from '../shared';
+import {MD_SIDENAV_DIRECTIVES} from '@angular2-material/sidenav/sidenav';
+import {MdButton} from '@angular2-material/button/button';
+import {HighlightPipe, PlaqueService} from '../shared';
+import {MdIcon} from 'ng2-material';
 import * as _ from 'lodash';
 
 const cloud: any = require('d3-cloud');
@@ -11,19 +13,23 @@ const cloud: any = require('d3-cloud');
   moduleId: 'app/tags/',
   selector: 'sg-tags',
   template: require('./tags.component.html'),
-  styles: [require('./tags.component.scss')]
+  styles: [require('./tags.component.scss')],
+  pipes: [HighlightPipe],
+  directives: [MD_SIDENAV_DIRECTIVES, MdIcon, MdButton],
+  encapsulation: ViewEncapsulation.None
 })
-export class TagsComponent implements OnInit,
-    OnDestroy {
+export class TagsComponent implements OnInit, OnDestroy {
   private data: any;
   private layout: any;
   private subscription: Subscription;
 
   selectedYear: any;
+  selectedWord: string;
   years: any;
   description: string;
+  plaque: any;
 
-  constructor(private plaqueService: PlaqueService) {}
+  constructor(private plaqueService: PlaqueService) { }
 
   ngOnInit() {
     this.subscription = this.plaqueService.tags().subscribe((data) => {
@@ -35,12 +41,23 @@ export class TagsComponent implements OnInit,
 
   ngOnDestroy() { this.subscription.unsubscribe(); }
 
-  showRandomPlaque(word) {
-    console.log('finding a random', word);
-    let list = this.data.filter(function(d) { return d.key === this.selectedYear.key; })[0];
-    let randIndex = Math.random() * list.cloud[word].length;
-    let pickId = list.cloud[word][randIndex];
+  highlit(text) {
+    text = text.replace(
+            new RegExp('(' + this.selectedWord + ')', 'gi'),
+            '<span class="myHighlight">$1</span>');
+    return text;
+  }
 
+  showRandomPlaque(word, year) {
+    console.log('finding a random', word, 'from', year.key);
+    this.selectedWord = word;
+    let list = year.cloud.filter(function (d) { return d.word === word; })[0];
+    let randIndex = Math.floor(Math.random() * list.plaques.length);
+    let pickId = list.plaques[randIndex];
+
+    this.plaqueService.getPlaque(pickId).subscribe((plaque) => {
+      this.plaque = plaque;
+    });
     console.log('the pick', pickId);
   }
 
@@ -48,60 +65,57 @@ export class TagsComponent implements OnInit,
     console.log(year);
     this.selectedYear = year;
     this.description = this.yearDescription(year.key);
-    let selected = this.data.filter(function(d) { return d.key === year.key; })[0];
-
-    var tags =
-        selected.cloud.map(function(d) { return {id: d.word, text: d.word, count: d.count}; });
-
-    this.makeCloud(tags, year);
+    this.makeCloud(year);
 
     this.layout.start();
   }
 
-  makeCloud(tags, year) {
-    var max = D3.max(tags, function(t: any) { return t.count; });
+  makeCloud(year) {
+    let tags = year.cloud.map(function (d) {
+      return { id: d.word, text: d.word, count: d.count }; });
+    var max = D3.max(tags, function (t: any) { return t.count; });
     let scale = D3.scale.linear().domain([0, max]).range([10, 100]);
 
     this.layout = cloud()
-                      .size([1000, 500])
-                      .words(tags)
-                      .padding(5)
-                      .rotate(function() { return Math.random() > 0.5 ? 90 : 0; })
-                      .font('Roboto')
-                      .fontSize(function(d) { return Math.floor(scale(d.count)); })
-                      .on('end', (words) => this.draw(words, year));
+      .size([1000, 500])
+      .words(tags)
+      .padding(5)
+      .rotate(function () { return Math.random() > 0.5 ? 90 : 0; })
+      .font('Roboto')
+      .fontSize(function (d) { return Math.floor(scale(d.count)); })
+      .on('end', (words) => this.draw(words, year));
   }
 
   draw(words, year) {
     let fill = D3.scale.category20();
     let data =
-        D3.select('#d3group').selectAll('text').data(words, function(w: any) { return w.id; });
+      D3.select('#d3group').selectAll('text').data(words, function (w: any) { return w.id; });
 
-    data.transition().duration(1e3).style('font-size', function(d: any) {
-                                     return d.size + 'px';
-                                   }).style('fill', function(d, i) {
-                                       return fill(i.toString());
-                                     }).attr('transform', function(d: any) {
+    data.transition().duration(1e3).style('font-size', function (d: any) {
+      return d.size + 'px';
+    }).style('fill', function (d, i) {
+      return fill(i.toString());
+    }).attr('transform', function (d: any) {
       return 'translate(' + [d.x, d.y] + ')rotate(' + d.rotate + ')';
     });
 
     data.enter()
-        .append('text')
-        .style('font-size', function(d: any) { return d.size + 'px'; })
-        .style('font-family', 'Roboto')
-        .style('fill', function(d, i) { return fill(i.toString()); })
-        .style('opacity', '0')
-        .attr('text-anchor', 'middle')
-        .attr(
-            'transform',
-            function(d: any) {
-              return 'translate(' + [d.x, d.y] + ')rotate(' + d.rotate + ')';
-            })
-        .text(function(d: any) { return d.text; })
-        .on('click', (clickedWord) => { this.showRandomPlaque(clickedWord.id); })
-        .transition()
-        .duration(0.5e3)
-        .style('opacity', '1');
+      .append('text')
+      .style('font-size', function (d: any) { return d.size + 'px'; })
+      .style('font-family', 'Roboto')
+      .style('fill', function (d, i) { return fill(i.toString()); })
+      .style('opacity', '0')
+      .attr('text-anchor', 'middle')
+      .attr(
+      'transform',
+      function (d: any) {
+        return 'translate(' + [d.x, d.y] + ')rotate(' + d.rotate + ')';
+      })
+      .text(function (d: any) { return d.text; })
+      .on('click', (clickedWord) => { this.showRandomPlaque(clickedWord.id, year); })
+      .transition()
+      .duration(0.5e3)
+      .style('opacity', '1');
 
     data.exit().transition().duration(0.5e3).style('opacity', '0').remove();
   }

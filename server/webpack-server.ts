@@ -4,7 +4,7 @@ var webpackDevServer = require('webpack-dev-server');
 var config = require('./config/webpack');
 
 export default (PORT) => {
-    config.devtool = 'inline-source-map';
+    config.devtool = 'source-map';
 
     // config.entry.app.unshift(`webpack-dev-server/client?http://localhost:${PORT}/`);
 
@@ -18,7 +18,7 @@ export default (PORT) => {
         proxy: {
             '/api/*': {
                 target: {
-                    'host': 'action-js.dev',
+                    'host': 'localhost',
                     'protocol': 'http',
                     'port': (PORT - 1)
                 },

@@ -34,6 +34,7 @@ module.exports = {
             //    'angular2/bundles/angular2-polyfills',
             'd3-cloud',
             'ng2-material',
+            '@angular2-material/button',
             '@angular2-material/core',
             '@angular2-material/checkbox',
             '@angular2-material/grid-list',

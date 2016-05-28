@@ -6,20 +6,22 @@ import {Observable} from 'rxjs/Rx';
 export class PlaqueService {
   constructor(private http: Http) {}
 
+  prefix: string = 'http://localhost:4999';
+
   listPlaques() {
-    var url = '/api/plaque/list/';
+    var url = this.prefix + '/api/plaque/list/';
     return this.http.get(url).map((res: Response) => res.json()).catch(this.handleError);
   }
   tags() {
-    var url = '/api/plaque/tags/';
+    var url = this.prefix + '/api/plaque/tags/';
     return this.http.get(url).map((res: Response) => res.json()).catch(this.handleError);
   }
   getPlaques(searchTerm) {
-    var url = '/api/plaque/search/' + searchTerm;
+    var url = this.prefix + '/api/plaque/search/' + searchTerm;
     return this.http.get(url).map((res: Response) => res.json()).catch(this.handleError);
   }
   getPlaque(plaqueId) {
-    var url = '/api/plaque/show/' + plaqueId;
+    var url = this.prefix + '/api/plaque/show/' + plaqueId;
     return this.http.get(url).map((res: Response) => res.json()).catch(this.handleError);
   }
 
