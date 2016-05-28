@@ -61,7 +61,7 @@ export default (path) => {
                 return p.inscription && p.erected_at;
             });
 
-            var clouds = cloud.cloudThis(tagPlaques, 'erected_at', 'inscription', {
+            var clouds = cloud.cloudThis(tagPlaques, 'id', 'erected_at', 'inscription', {
                 topN: 15,
                 minCount: 1,
                 exclude: [
