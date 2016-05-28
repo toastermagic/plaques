@@ -43,7 +43,7 @@ function keyDescription(key) {
         case '2000':
             return 'A century is celebrated, and the renaissance of Leeds begins';
         case '2010':
-            return 'Since 2010 we have been very proud of our railway system';
+            return 'The most common words on plaques of each decade';
     }
 }
 
