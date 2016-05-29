@@ -39,5 +39,6 @@
     <div layout="row" layout-align="center" style="margin-top:10px" *ngIf="selectedYear">
       {{ selectedYear.description }}
     </div>
+    <sg-plaque-card #plaquecard *ngIf="cardVisible" [plaque]="plaque"></sg-plaque-card>
   </md-content>
 </md-sidenav-layout>

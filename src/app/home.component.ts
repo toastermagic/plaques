@@ -10,7 +10,7 @@ import {TagsComponent} from './tags';
   moduleId: 'app/',
   selector: 'sg-plaques',
   template: require('./home.component.html'),
-  styles: [ require('./home.component.scss')],
+  styles: [require('./home.component.scss')],
   directives: [MdIcon, MdToolbar, ROUTER_DIRECTIVES, TagsComponent]
 })
 @Routes([

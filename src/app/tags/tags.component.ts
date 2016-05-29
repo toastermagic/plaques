@@ -1,11 +1,18 @@
-import {ChangeDetectorRef, ViewChild, ViewEncapsulation,
-  Component, OnInit, OnDestroy} from '@angular/core';
-import * as D3 from 'd3';
-import {Subscription} from 'rxjs/Subscription';
+import {ChangeDetectorRef,
+   ViewChild,
+   ViewEncapsulation,
+   Component,
+   OnInit,
+   OnDestroy} from '@angular/core';
 import {MD_SIDENAV_DIRECTIVES} from '@angular2-material/sidenav/sidenav';
-import {HighlightPipe, PlaqueService} from '../shared';
-import {MATERIAL_DIRECTIVES} from 'ng2-material';
+import * as D3 from 'd3';
 import * as _ from 'lodash';
+import {MATERIAL_DIRECTIVES} from 'ng2-material';
+import {Subscription} from 'rxjs/Subscription';
+
+import {HighlightPipe, PlaqueService} from '../shared';
+
+import {PlaqueCardComponent} from './plaque-card.component';
 
 const cloud: any = require('d3-cloud');
 
@@ -15,7 +22,7 @@ const cloud: any = require('d3-cloud');
   template: require('./tags.component.html'),
   styles: [require('./tags.component.scss')],
   pipes: [HighlightPipe],
-  directives: [MATERIAL_DIRECTIVES, MD_SIDENAV_DIRECTIVES],
+  directives: [MATERIAL_DIRECTIVES, MD_SIDENAV_DIRECTIVES, PlaqueCardComponent],
   encapsulation: ViewEncapsulation.None
 })
 export class TagsComponent implements OnInit, OnDestroy {
@@ -24,6 +31,11 @@ export class TagsComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
 
   @ViewChild('sidebar') sidebar;
+  @ViewChild(PlaqueCardComponent) plaqueCard: PlaqueCardComponent;
+
+  cardLeft: number;
+  cardTop: number;
+  cardVisible: boolean;
 
   selectedYear: any;
   selectedWord: string;
@@ -32,7 +44,7 @@ export class TagsComponent implements OnInit, OnDestroy {
   plaque: any;
   canvasWidth: number = 100;
   canvasHeight: number = 50;
-  barOpen: boolean = false;
+  barOpen: boolean;
 
   constructor(
     private plaqueService: PlaqueService,
@@ -80,26 +92,30 @@ export class TagsComponent implements OnInit, OnDestroy {
 
   toggleSidebar() {
     this.barOpen = !this.barOpen;
-    this.setPanelSize();
     if (this.barOpen) {
       this.sidebar.open(); // .then(this.showYear(this.selectedYear));
     } else {
       this.sidebar.close(); // .then(this.showYear(this.selectedYear));
     }
     setTimeout(() => {
+      this.setPanelSize();
       this.showYear(this.selectedYear);
     }, 500);
   }
 
-  showRandomPlaque(word, year) {
-    this.selectedWord = word;
-    let list = year.cloud.filter(function (d) { return d.word === word; })[0];
+  onWordClick(word, year) {
+    console.log('event', event);
+    this.selectedWord = word.text;
+    let list = year.cloud.filter(function (d) { return d.word === word.text; })[0];
     let randIndex = Math.floor(Math.random() * list.plaques.length);
     let pickId = list.plaques[randIndex];
 
     this.plaqueService.getPlaque(pickId).subscribe((plaque) => {
       this.plaque = plaque;
+      this.cardVisible = true;
     });
+
+    this.scram(word);
   }
 
   showYear(year) {
@@ -130,22 +146,54 @@ export class TagsComponent implements OnInit, OnDestroy {
       .on('end', (words) => this.draw(words, year));
   }
 
+  scram(exceptWord) {
+    let words = D3
+      .select('#d3group')
+      .selectAll('text');
+
+    words
+      .filter(function (d) { return exceptWord.id != d.id; })
+      .transition()
+      .duration(250)
+      .delay(function (a, b) { return b * 50; })
+      .style('opacity', '0')
+      .remove();
+
+    words
+      .filter(function (d) { return exceptWord.id === d.id; })
+      .transition()
+      .delay(500)
+      .duration(750)
+      .attr(
+      'transform',
+      function (d: any) {
+        return 'translate(0, -150)rotate(0)';
+      })
+      .style('font-size', function (d: any) {
+        return (window.innerWidth / 1600) * 120 + 'px';
+      });
+  }
+
   draw(words, year) {
     let fill = D3.scale.category20();
     let data =
       D3.select('#d3group').selectAll('text').data(words, function (w: any) { return w.id; });
 
     data
-    .on('click', (clickedWord) => { this.showRandomPlaque(clickedWord.id, year); })
-    .transition().duration(1e3).style('font-size', function (d: any) {
-      return d.size + 'px';
-    }).style('fill', function (d, i) {
-      return fill(i.toString());
-    }).attr('transform', function (d: any) {
-      return 'translate(' + [d.x, d.y] + ')rotate(' + d.rotate + ')';
-    });
+      .on('click', (clickedWord) => { this.onWordClick(clickedWord, year); })
+      .transition()
+      .duration(1e3)
+      .delay(function (a, b) { return b * 12; })
+      .style('font-size', function (d: any) {
+        return d.size + 'px';
+      }).style('fill', function (d, i) {
+        return fill(i.toString());
+      }).attr('transform', function (d: any) {
+        return 'translate(' + [d.x, d.y] + ')rotate(' + d.rotate + ')';
+      });
 
-    data.enter()
+    data
+      .enter()
       .append('text')
       .style('font-size', function (d: any) { return d.size + 'px'; })
       .style('font-family', 'Roboto')
@@ -153,17 +201,53 @@ export class TagsComponent implements OnInit, OnDestroy {
       .style('fill', function (d, i) { return fill(i.toString()); })
       .style('opacity', '0')
       .attr('text-anchor', 'middle')
-      .attr(
-      'transform',
-      function (d: any) {
+      .attr('transform', function (d: any) {
         return 'translate(' + [d.x, d.y] + ')rotate(' + d.rotate + ')';
       })
       .text(function (d: any) { return d.text; })
-      .on('click', (clickedWord) => { this.showRandomPlaque(clickedWord.id, year); })
+      .on('click', (clickedWord) => {
+        this.onWordClick(clickedWord, year);
+      })
       .transition()
+      .delay(function (a, b) { return b * 50; })
       .duration(0.5e3)
       .style('opacity', '1');
 
-    data.exit().transition().duration(0.5e3).style('opacity', '0').remove();
+    data
+      .exit()
+      .transition()
+      .delay(function (a, b) { return b * 20; })
+      .duration(0.5e3)
+      .style('opacity', '0')
+      .remove();
+  }
+
+  highlight(word) {
+    let coords = word.rotate == 0 ?
+      {
+        x: word.x + word.x0,
+        y: word.y + word.y0,
+        width: word.x1 - word.x0,
+        height: word.y1
+      } :
+      {
+        x: word.x - word.padding,
+        y: word.y + word.y0 - word.padding,
+        width: word.x1,
+        height: word.y1 - word.y0
+      };
+
+    D3
+      .select('#d3group')
+      .append('rect')
+      .attr('id', 'highlightRect')
+      .attr({
+        'x': coords.x, 'y': coords.y,
+        'width': coords.width, 'height': coords.height
+      })
+      .attr('fill', 'none')
+      .attr('stroke', 'yellow')
+      .attr('stroke-width', '2')
+      .attr('class', 'hvr-pulse-grow');
   }
 }
