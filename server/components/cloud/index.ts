@@ -34,7 +34,7 @@ module.exports = {
                 .filter(function(w) { return r.cloud[w].length > minCount; })
                 .sortBy(function (w) { return r.cloud[w].length * -1; })
                 .map(function(w) {
-                    return {word: w, count: r.cloud[w].length, plaques: r.cloud[w]}; })
+                    return {word: w, count: r.cloud[w].length, plaques: _.uniq(r.cloud[w]) }; })
                 .take(topN)
                 .value();
         });
