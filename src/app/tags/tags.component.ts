@@ -1,5 +1,4 @@
 import {ChangeDetectorRef,
-  ViewChild,
   ViewEncapsulation,
   Component,
   OnInit,
@@ -31,25 +30,18 @@ export class TagsComponent implements OnInit, OnDestroy {
   private data: any;
   private subscription: Subscription;
 
-  @ViewChild('sidebar') sidebar;
-  @ViewChild(PlaqueCardComponent) plaqueCard: PlaqueCardComponent;
-
   hand: any = [];
-  words: any = [];
 
   onDeal: Subject<any> = new Subject<any>();
   onWordCloud = new Subject<any>();
 
-  cardLeft: number;
-  cardTop: number;
-  cardVisible: boolean;
+  handTop: string = '0px';
 
-  plaqueIdList: any;
   selectedYear: any;
   years: any;
   description: string;
-  plaque: any;
-  barOpen: boolean;
+  private showIndex: number;
+  private selectedWord: any;
 
   constructor(
     private plaqueService: PlaqueService,
@@ -57,9 +49,12 @@ export class TagsComponent implements OnInit, OnDestroy {
 
     window.onresize = () => {
       this.onResize(() => {
+        this.handTop = (window.innerHeight / 6) + 'px';
         this.showYear(this.selectedYear);
       });
     };
+
+    this.handTop = (window.innerHeight / 6) + 'px';
   }
 
   ngOnInit() {
@@ -89,22 +84,55 @@ export class TagsComponent implements OnInit, OnDestroy {
       });
   }
 
-  showMore = (word) => {
+  showMore = () => {
     this
-      .undealHand()
-      .subscribe(() => { }, () => { }, () => {
-        this.onWordClick(word);
+      .undealCard()
+      .subscribe(() => {
+        this
+          .plaqueService
+          .getPlaque(this.selectedWord.plaques[this.showIndex])
+          .subscribe((card) => {
+            this.hand.push({
+              plaque: card,
+              position: this.hand.length + 1,
+              visible: true
+            });
+            this.showIndex++;
+          });
       });
   }
 
+  undealCard = () => {
+    let p = new Subject<boolean>();
+
+    if (!this.hand || this.hand.length === 0) {
+      p.next(false);
+    } else {
+      setTimeout(() => {
+        this.hand.shift();
+        // this.hand.splice(0, 1);
+        p.next(true);
+      }, 500 * this.hand.length);
+
+      this.hand[0].visible = false;
+    }
+
+    return p;
+  }
+
   onWordClick = (word) => {
+    this.selectedWord = word;
+
     let available = _.clone(word.plaques);
     let requests = [];
 
+    this.showIndex = 0;
+
     while (available.length > 0 && requests.length < 3) {
-      let next = available.splice(Math.random() * available.length, 1);
+      let next = available.pop();
       let obs = this.plaqueService.getPlaque(next);
       requests.push(obs);
+      this.showIndex++;
     }
 
     this
@@ -179,7 +207,7 @@ export class TagsComponent implements OnInit, OnDestroy {
     cloud()
       .size([window.innerWidth, window.innerHeight - 80])
       .words(tags)
-      .padding(15)
+      .padding(window.innerWidth / 100)
       .rotate(() => Math.random() > 0.5 ? 90 : 0)
       .font('Roboto')
       .fontSize((d) => Math.floor(scale(d.count)))
@@ -233,9 +261,9 @@ export class TagsComponent implements OnInit, OnDestroy {
           D3.select('#' + a.id)
             .style('transform', (d) => 'translate(-50%, -87%) rotate(0deg)');
         })
-        .style('font-size', (d) => (window.innerWidth / 1600) * 120 + 'px')
+        .style('font-size', (d) => (window.innerWidth / 1600) * 90 + 'px')
         .style('left', (d) => ((window.innerWidth) / 2) + 'px')
-        .style('top', (d) => ((window.innerHeight) / 4) + 'px')
+        .style('top', (d) => ((window.innerHeight) / 8) + 'px')
         .call(this.endAll, () => {
           finishedB.next(true);
           finishedB.complete();
