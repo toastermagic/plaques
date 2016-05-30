@@ -10,6 +10,14 @@ To see it:
 
 `npm i`
 
+If you use VSCode:
+
 `code .`
 
 hit F5
+
+otherwise:
+
+`gulp build`
+
+`node dist/server/app.js`
