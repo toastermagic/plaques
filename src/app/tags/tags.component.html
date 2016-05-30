@@ -1,10 +1,8 @@
 <md-content layout="column" layout-fill layout-align="start center" style="overflow:hidden">
  
-  <div layout="column" layout-fill layout-align="start center" onselectstart="return false">
-    <div style="position:absolute; top: 100px; width:100%">
-      <div style="display: block">
-        <sg-plaque-card class="animated" [ngClass]="{'zoomIn': card.visible, 'zoomOut': !card.visible}" #plaquecard *ngFor="let card of hand" [plaque]="card.plaque" [position]="card.position"></sg-plaque-card>
-      </div>
+  <div layout="column" layout-fill layout-align="start start" onselectstart="return false">
+    <div style="position:absolute; width:100%" [ngStyle]="{top: handTop}">
+      <sg-plaque-card #plaquecard [hand]="hand" style="width:100%"></sg-plaque-card>
     </div>
     <div id="d3div" style="flex: 1 1 auto">
     </div>
@@ -14,11 +12,13 @@
         <button md-button class="md-raised-button" (click)="showMore()">More</button>
       </div>
     </div>
-    <div layout="row" *ngIf="years" style="overflow-x:auto; padding: 5px">
-      <div *ngFor="let year of years">
-        <button md-fab class="md-raised md-mini" style="margin:0 5px;" (click)="showYear(year)" [ngClass]="{'md-primary': year !== selectedYear}">
-          <div class="fab-text">{{ year.key }}</div>
-        </button>
+    <div layout="row" layout-align="center" style="width:100%">
+      <div layout="row" *ngIf="years" style="overflow-x:auto; padding: 5px">
+        <div *ngFor="let year of years">
+          <button md-fab class="md-raised md-mini" style="margin:0 5px;" (click)="showYear(year)" [ngClass]="{'md-primary': year !== selectedYear}">
+            <div class="fab-text">{{ year.key }}</div>
+          </button>
+        </div>
       </div>
     </div>
     <div layout="row" layout-align="center" style="margin-top:5px" *ngIf="selectedYear">
