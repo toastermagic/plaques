@@ -1,0 +1,37 @@
+md-card {
+    -webkit-transition: all 1s ease-in-out;
+    transition: all 1s ease-in-out;
+}
+
+@media all and (max-width: 800px) {
+//   md-content {
+//     display: none;
+//   }
+  
+  md-card {
+    padding: 0px;
+  }
+}
+
+.imgContainer
+{
+  display: block;
+  width: 100%;
+  position: relative;
+  height: 0;
+  padding: 100% 0 0 0;
+  overflow: hidden;
+}
+
+.imgContainer > img
+{
+  position: absolute;
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+}
