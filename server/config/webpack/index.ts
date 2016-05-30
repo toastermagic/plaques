@@ -140,7 +140,8 @@ module.exports = {
         }),
         new copyWebpackPlugin([
             // Copy directory contents to {output}/to/directory/ 
-            { from: 'node_modules/ng2-material/ng2-material.css', to: 'node_modules/ng2-material' }
+            { from: 'node_modules/ng2-material/ng2-material.css', to: 'node_modules/ng2-material/' },
+            { from: 'node_modules/animate.css/animate.css', to: 'node_modules/animate.css/' }
         ])
     ]
 };

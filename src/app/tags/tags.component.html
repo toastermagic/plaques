@@ -1,44 +1,28 @@
-<button md-fab class="md-mini md-primary" (click)="toggleSidebar()" title="Show Plaque Info" style="position:absolute; top:10px; left:10px; color: rgba(200,200,200,0.8); z-index:9999">
-  <i md-icon>menu</i>
-</button>
-<md-sidenav-layout>
-  <md-sidenav #sidebar mode="side" style="width:350px; background: rgba(200,200,200,0.2)">
-    <div layout="column" layout-padding layout-align="start center">
-      <div *ngIf="plaque" layout="column" layout-padding layout-align="end center">
-        <div layout="row" layout-align="end end" style="min-height:120px; margin-top:50px">
-          <h4>{{ plaque.erected_at }} - {{ plaque.title }}</h4>
-          <img class="plaqueThumb" src="{{ plaque.thumbnail_url }}" />
-        </div>
-        <div style="flex: 1 1 auto; margin-top:10px; overflow-y:auto" [innerHtml]="highlit(plaque.inscription)"></div>
-      </div>
-      <div *ngIf="!plaque">
-        Click a word to find a plaque
-      </div>
-      <div style="flex: 1 1 auto"></div>
-      <div style="font-size:smaller;">data provided by <a href="http://openplaques.org">openplaques.org</a></div>
-    </div>
-  </md-sidenav>
-  <md-content layout="column" layout-fill style="overflow:hidden">
-    <div layout="row">
-      <div style="flex: 1 1 auto; position:relative" layout-align="center start">
-        <div layout="column" layout-fill style="overflow:hidden" onselectstart="return false">
-          <canvas width="{{ canvasWidth }}" height="{{ canvasHeight }}"></canvas>
-          <svg id="d3svg" [attr.width]="canvasWidth" [attr.height]="canvasHeight" [attr.viewBox]="'0 0 ' + canvasWidth + ' ' + canvasHeight">
-            <g id="d3group" [attr.transform]="'translate(' + canvasWidth / 2 + ' ' + canvasHeight / 2 + ')'"></g>
-          </svg>
-          <div layout="row" layout-align="center start" *ngIf="years" style="overflow-x:auto; padding: 5px">
-            <div *ngFor="let year of years">
-              <button md-fab class="md-raised md-mini" style="margin:0 5px;" (click)="showYear(year)" [ngClass]="{'md-primary': year !== selectedYear}">
-                <div class="fab-text">{{ year.key }}</div>
-              </button>
-            </div>
-          </div>
-        </div>
+<md-content layout="column" layout-fill layout-align="start center" style="overflow:hidden">
+ 
+  <div layout="column" layout-fill layout-align="start center" onselectstart="return false">
+    <div style="position:absolute; top: 100px; width:100%">
+      <div style="display: block">
+        <sg-plaque-card class="animated" [ngClass]="{'zoomIn': card.visible, 'zoomOut': !card.visible}" #plaquecard *ngFor="let card of hand" [plaque]="card.plaque" [position]="card.position"></sg-plaque-card>
       </div>
     </div>
-    <div layout="row" layout-align="center" style="margin-top:10px" *ngIf="selectedYear">
+    <div id="d3div" style="flex: 1 1 auto">
+    </div>
+    <div *ngIf="hand.length > 0" style="z-index: 2; width: 100%">
+      <div layout="row" layout-align="center end">
+        <button md-button class="md-raised-button" (click)="goBack()">Back</button>
+        <button md-button class="md-raised-button" (click)="showMore()">More</button>
+      </div>
+    </div>
+    <div layout="row" *ngIf="years" style="overflow-x:auto; padding: 5px">
+      <div *ngFor="let year of years">
+        <button md-fab class="md-raised md-mini" style="margin:0 5px;" (click)="showYear(year)" [ngClass]="{'md-primary': year !== selectedYear}">
+          <div class="fab-text">{{ year.key }}</div>
+        </button>
+      </div>
+    </div>
+    <div layout="row" layout-align="center" style="margin-top:5px" *ngIf="selectedYear">
       {{ selectedYear.description }}
     </div>
-    <sg-plaque-card #plaquecard *ngIf="cardVisible" [plaque]="plaque"></sg-plaque-card>
-  </md-content>
-</md-sidenav-layout>
+  </div>
+</md-content>

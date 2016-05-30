@@ -4,7 +4,7 @@ var webpackDevServer = require('webpack-dev-server');
 var config = require('./config/webpack');
 
 export default (PORT) => {
-    config.devtool = 'source-map';
+    config.devtool = 'eval';
 
     // config.entry.app.unshift(`webpack-dev-server/client?http://localhost:${PORT}/`);
 

@@ -5,92 +5,15 @@
     font-size: smaller;
 }
 
-.myFlex {
-    flex: 1 1 auto !important;
-}
-
-canvas {
-    display: block;
-    width: 100%;
-    visibility: hidden;
-}
-
-svg {
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-.plaqueThumb {
-    width:120px;
-    height:120px;
-    min-width:120px;
-    min-height:120px;
-}
-
-.myHighlight {
-    color: rgba(250,250,250,1);
-    background-color: rgba(128,128,128,0.5);
-}
-
 sg-plaque-card {
     position: absolute;
 }
-.hvr-pulse-grow {
-  opacity: 0.5;
-  transform-origin: 50% 50% 0;
-  -moz-transform-origin: 50% 50% 0;
-  display: inline-block;
-  vertical-align: middle;
-  box-shadow: 0 0 0px #ff0;
-  -webkit-box-shadow: 0 0 0px #ff0;
-  -moz-box-shadow: 0 0 0px #ff0;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-animation-name: hvr-pulse-grow;
-  animation-name: hvr-pulse-grow;
-  -webkit-animation-duration: 0.3s;
-  animation-duration: 0.3s;
-  -webkit-animation-timing-function: linear;
-  animation-timing-function: linear;
-  -webkit-animation-iteration-count: infinite;
-  animation-iteration-count: infinite;
-  -webkit-animation-direction: alternate;
-  animation-direction: alternate;
-}
-@-moz-keyframes hvr-pulse-grow {
-  100% {
-  box-shadow: 0 0 5px #ff0;
-  -webkit-box-shadow: 0 0 5px #ff0;
-  -moz-box-shadow: 0 0 5px #ff0;
-  }
-}
-@-webkit-keyframes hvr-pulse-grow {
-  100% {
-  box-shadow: 0 0 5px #ff0;
-  -webkit-box-shadow: 0 0 5px #ff0;
-  -moz-box-shadow: 0 0 5px #ff0;
-  }
-}
-@-o-keyframes hvr-pulse-grow {
-  100% {
-  box-shadow: 0 0 5px #ff0;
-  -webkit-box-shadow: 0 0 5px #ff0;
-  -moz-box-shadow: 0 0 5px #ff0;
-  }
-}
-@-ms-keyframes hvr-pulse-grow {
-  100% {
-  box-shadow: 0 0 5px #ff0;
-  -webkit-box-shadow: 0 0 5px #ff0;
-  -moz-box-shadow: 0 0 5px #ff0;
-  }
-}
-@keyframes hvr-pulse-grow {
-  100% {
-  box-shadow: 0 0 5px #ff0;
-  -webkit-box-shadow: 0 0 5px #ff0;
-  -moz-box-shadow: 0 0 5px #ff0;
-  }
+
+.tagWord {
+    cursor: pointer;
+    transform-origin: 50% 87%;
+    position: absolute;
+    // transform: 'translate(-50%, -87%) rotate(0deg)';
+    transition: transform 750ms ease-in-out;
+    -webkit-transition: transform 750ms ease-in-out;
 }

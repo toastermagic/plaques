@@ -125,6 +125,9 @@ export default (path) => {
             var found = _.find(plaques, { 'id': +plaqueId });
             return Promise.resolve(found);
         },
+        getByIdList: function(list) {
+            console.log(list);
+        },
         list: function () {
 
             var results = [];

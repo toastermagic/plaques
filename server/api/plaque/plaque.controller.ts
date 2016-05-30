@@ -22,6 +22,14 @@ exports.get = function(req, res) {
     });
 };
 
+exports.getMulti = function(req, res) {
+    repo
+    .getByIdList(req.params.idArray)
+    .then(function(results) {
+        res.json(results);
+    });
+};
+
 exports.show = function(req, res) {
     repo
     .getById(req.params.plaqueId)

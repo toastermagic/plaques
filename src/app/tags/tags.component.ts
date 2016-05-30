@@ -1,14 +1,16 @@
 import {ChangeDetectorRef,
-   ViewChild,
-   ViewEncapsulation,
-   Component,
-   OnInit,
-   OnDestroy} from '@angular/core';
+  ViewChild,
+  ViewEncapsulation,
+  Component,
+  OnInit,
+  OnDestroy} from '@angular/core';
 import {MD_SIDENAV_DIRECTIVES} from '@angular2-material/sidenav/sidenav';
 import * as D3 from 'd3';
 import * as _ from 'lodash';
 import {MATERIAL_DIRECTIVES} from 'ng2-material';
+// import {Observable} from 'rxjs/Observable';
 import {Subscription} from 'rxjs/Subscription';
+import {Subject} from 'rxjs/Subject';
 
 import {HighlightPipe, PlaqueService} from '../shared';
 
@@ -27,23 +29,26 @@ const cloud: any = require('d3-cloud');
 })
 export class TagsComponent implements OnInit, OnDestroy {
   private data: any;
-  private layout: any;
   private subscription: Subscription;
 
   @ViewChild('sidebar') sidebar;
   @ViewChild(PlaqueCardComponent) plaqueCard: PlaqueCardComponent;
 
+  hand: any = [];
+  words: any = [];
+
+  onDeal: Subject<any> = new Subject<any>();
+  onWordCloud = new Subject<any>();
+
   cardLeft: number;
   cardTop: number;
   cardVisible: boolean;
 
+  plaqueIdList: any;
   selectedYear: any;
-  selectedWord: string;
   years: any;
   description: string;
   plaque: any;
-  canvasWidth: number = 100;
-  canvasHeight: number = 50;
   barOpen: boolean;
 
   constructor(
@@ -52,10 +57,264 @@ export class TagsComponent implements OnInit, OnDestroy {
 
     window.onresize = () => {
       this.onResize(() => {
-        this.setPanelSize();
         this.showYear(this.selectedYear);
       });
     };
+  }
+
+  ngOnInit() {
+    this.subscription = this.plaqueService.tags().subscribe((data) => {
+      this.data = data;
+      this.years = _.sortBy(data, 'key');
+      this.showYear(this.years[this.years.length - 1]);
+    });
+
+    this
+      .onWordCloud
+      .subscribe((words) => {
+        this.write(words);
+      });
+
+    this.onDeal.subscribe((list) => {
+      this.deal(list);
+    });
+  }
+
+  //  undeal hand, then reshow tag cloud
+  goBack = () => {
+    this
+      .undealHand()
+      .subscribe(() => { }, () => { }, () => {
+        this.showYear(this.selectedYear);
+      });
+  }
+
+  showMore = (word) => {
+    this
+      .undealHand()
+      .subscribe(() => { }, () => { }, () => {
+        this.onWordClick(word);
+      });
+  }
+
+  onWordClick = (word) => {
+    let available = _.clone(word.plaques);
+    let requests = [];
+
+    while (available.length > 0 && requests.length < 3) {
+      let next = available.splice(Math.random() * available.length, 1);
+      let obs = this.plaqueService.getPlaque(next);
+      requests.push(obs);
+    }
+
+    this
+      .scram(word)
+      .combineLatest(requests)
+      .subscribe(
+      (result) => {
+        // result will have 'scram' at index 0, so remove it
+        result.splice(0, 1);
+        this.onDeal.next(result);
+      },
+      (err) => {
+        console.log(err);
+      });
+  }
+
+  deal = (cards) => {
+    for (var index = 0; index < cards.length; index++) {
+      let card = {
+        plaque: cards[index],
+        position: index + 1,
+        visible: true
+      };
+
+      setTimeout(() => {
+        this.hand.push(card);
+      }, 500 * index);
+    };
+  }
+
+  showYear = (year) => {
+    this.selectedYear = year;
+
+    this.makeCloud(year);
+    // this.undealHand()
+    //   .subscribe(() => { }, () => { }, () => { this.layout.start(); });
+  }
+
+  undealHand = () => {
+    let p = new Subject<boolean>();
+
+    if (!this.hand || this.hand.length === 0) {
+      p.complete();
+    } else {
+      setTimeout(() => {
+        this.hand = [];
+        p.complete();
+      }, 500 * this.hand.length);
+
+      for (var index = 0; index < this.hand.length; index++) {
+        let c = this.hand[index];
+
+        setTimeout(() => {
+          c.visible = false;
+        }, 500 * index);
+      }
+    }
+
+    return p;
+  }
+
+  makeCloud = (year?) => {
+    year = year || this.selectedYear;
+
+    let tags = year.cloud.map((d) => {
+      return { id: d.word, plaques: d.plaques, text: d.word, count: d.count };
+    });
+    var max = D3.max(tags, (t: any) => t.count);
+    var maxFont = (window.innerWidth / 1600) * 120;
+    let scale = D3.scale.linear().domain([0, max]).range([10, maxFont]);
+
+    cloud()
+      .size([window.innerWidth, window.innerHeight - 80])
+      .words(tags)
+      .padding(15)
+      .rotate(() => Math.random() > 0.5 ? 90 : 0)
+      .font('Roboto')
+      .fontSize((d) => Math.floor(scale(d.count)))
+      .on('end', (words) => {
+        this.onWordCloud.next(words);
+      }).start();
+  }
+
+  scram = (exceptWord) => {
+    let words = D3
+      .select('#d3div')
+      .selectAll('div');
+
+    let finishedA = new Subject<boolean>();
+    let finishedB = new Subject<boolean>();
+
+    let workToDoA: boolean;
+    let workToDoB: boolean;
+
+    finishedA.startWith(false);
+    let wordsA = words
+      .filter((d) => exceptWord.id != d.id);
+
+    if (wordsA.length > 0) {
+      workToDoA = true;
+
+      wordsA
+        .transition()
+        .duration(250)
+        .delay((a, b) => b * 50)
+        .style('opacity', '0')
+        .remove()
+        .call(this.endAll, () => {
+          finishedA.next(true);
+          finishedA.complete();
+        });
+    }
+
+    finishedB.startWith(false);
+    let wordsB = words
+      .filter((d) => exceptWord.id === d.id);
+
+    if (wordsB.length > 0) {
+      workToDoB = true;
+
+      wordsB
+        .transition()
+        .delay(500)
+        .duration(750)
+        .each('start', (a, b) => {
+          D3.select('#' + a.id)
+            .style('transform', (d) => 'translate(-50%, -87%) rotate(0deg)');
+        })
+        .style('font-size', (d) => (window.innerWidth / 1600) * 120 + 'px')
+        .style('left', (d) => ((window.innerWidth) / 2) + 'px')
+        .style('top', (d) => ((window.innerHeight) / 4) + 'px')
+        .call(this.endAll, () => {
+          finishedB.next(true);
+          finishedB.complete();
+        });
+    }
+
+    if (!workToDoA) {
+      finishedA.complete();
+    }
+
+    if (!workToDoB) {
+      finishedB.complete();
+    }
+
+    return finishedA.combineLatest(finishedB);
+  }
+
+  write = (words) => {
+    let fill = D3.scale.category20();
+    let data =
+      D3.select('#d3div').selectAll('div').data(words, (w: any) => w.id);
+
+    data
+      .on('click', (clickedWord) => { this.onWordClick(clickedWord); })
+      .transition()
+      .delay((a, b) => b * 20)
+      .duration(() => 500 + Math.random() * 500)
+      .each('start', (a, b) => {
+        D3
+          .select('#' + a.id)
+          .style('transform', (d) => 'translate(-50%, -87%) rotate(' + d.rotate + 'deg)');
+      })
+      .style('font-size', (d) => d.size + 'px')
+      .style('color', (d, i) => fill(i.toString()))
+      .style('left', (d) => d.x + ((window.innerWidth) / 2) + 'px')
+      .style('top', (d) => d.y - 20 + ((window.innerHeight) / 2) + 'px');
+
+    data
+      .enter()
+      .append('div')
+      .attr('id', (d) => d.text)
+      .classed('tagWord', true)
+      .on('click', (clickedWord) => { this.onWordClick(clickedWord); })
+      .style('font-family', 'Roboto')
+      .style('font-size', (d) => d.size + 'px')
+      .style('color', (d, i) => fill(i.toString()))
+      .style('left', (d) => d.x + ((window.innerWidth) / 2) + 'px')
+      .style('top', (d) => d.y - 20 + ((window.innerHeight) / 2) + 'px')
+      .style('transform', (d) => 'translate(-50%, -87%) rotate(' + d.rotate + 'deg)')
+      .text((d) => d.text)
+      .style('opacity', '0')
+      .transition()
+      .delay((a, b) => b * 50)
+      .duration(0.5e3)
+      .style('opacity', '1');
+
+    data
+      .exit()
+      .transition()
+      .delay((a, b) => b * 50)
+      .duration(500)
+      .style({ 'opacity': 0 })
+      .remove();
+  }
+
+  endAll = (transition, callback) => {
+    if (transition.size() === 0) {
+      callback();
+    }
+    var n = 0;
+    transition
+      .each(function () {
+        ++n;
+      })
+      .each('end', function () {
+        if (!--n) {
+          callback.apply(this, arguments);
+        }
+      });
   }
 
   onResize = (c, t?) => {
@@ -66,188 +325,8 @@ export class TagsComponent implements OnInit, OnDestroy {
     return c;
   };
 
-  ngOnInit() {
-    this.subscription = this.plaqueService.tags().subscribe((data) => {
-      this.data = data;
-      this.years = _.sortBy(data, 'key');
-      this.showYear(this.years[this.years.length - 1]);
-    });
-
-    this.setPanelSize();
-  }
-
-  ngOnDestroy() { this.subscription.unsubscribe(); }
-
-  setPanelSize() {
-    this.canvasHeight = window.innerHeight - 80;
-    this.canvasWidth = window.innerWidth - (this.barOpen ? 350 : 0);
-  }
-
-  highlit(text) {
-    text = text.replace(
-      new RegExp('(' + this.selectedWord + ')', 'gi'),
-      '<span class="myHighlight">$1</span>');
-    return text;
-  }
-
-  toggleSidebar() {
-    this.barOpen = !this.barOpen;
-    if (this.barOpen) {
-      this.sidebar.open(); // .then(this.showYear(this.selectedYear));
-    } else {
-      this.sidebar.close(); // .then(this.showYear(this.selectedYear));
-    }
-    setTimeout(() => {
-      this.setPanelSize();
-      this.showYear(this.selectedYear);
-    }, 500);
-  }
-
-  onWordClick(word, year) {
-    console.log('event', event);
-    this.selectedWord = word.text;
-    let list = year.cloud.filter(function (d) { return d.word === word.text; })[0];
-    let randIndex = Math.floor(Math.random() * list.plaques.length);
-    let pickId = list.plaques[randIndex];
-
-    this.plaqueService.getPlaque(pickId).subscribe((plaque) => {
-      this.plaque = plaque;
-      this.cardVisible = true;
-    });
-
-    this.scram(word);
-  }
-
-  showYear(year) {
-    this.selectedYear = year;
-    this.makeCloud(year);
-    this.plaque = null;
-
-    this.layout.start();
-  }
-
-  makeCloud(year?) {
-    year = year || this.selectedYear;
-
-    let tags = year.cloud.map(function (d) {
-      return { id: d.word, text: d.word, count: d.count };
-    });
-    var max = D3.max(tags, function (t: any) { return t.count; });
-    var maxFont = (window.innerWidth / 1600) * 120;
-    let scale = D3.scale.linear().domain([0, max]).range([10, maxFont]);
-
-    this.layout = cloud()
-      .size([this.canvasWidth, this.canvasHeight])
-      .words(tags)
-      .padding(10)
-      .rotate(function () { return Math.random() > 0.5 ? 90 : 0; })
-      .font('Roboto')
-      .fontSize(function (d) { return Math.floor(scale(d.count)); })
-      .on('end', (words) => this.draw(words, year));
-  }
-
-  scram(exceptWord) {
-    let words = D3
-      .select('#d3group')
-      .selectAll('text');
-
-    words
-      .filter(function (d) { return exceptWord.id != d.id; })
-      .transition()
-      .duration(250)
-      .delay(function (a, b) { return b * 50; })
-      .style('opacity', '0')
-      .remove();
-
-    words
-      .filter(function (d) { return exceptWord.id === d.id; })
-      .transition()
-      .delay(500)
-      .duration(750)
-      .attr(
-      'transform',
-      function (d: any) {
-        return 'translate(0, -150)rotate(0)';
-      })
-      .style('font-size', function (d: any) {
-        return (window.innerWidth / 1600) * 120 + 'px';
-      });
-  }
-
-  draw(words, year) {
-    let fill = D3.scale.category20();
-    let data =
-      D3.select('#d3group').selectAll('text').data(words, function (w: any) { return w.id; });
-
-    data
-      .on('click', (clickedWord) => { this.onWordClick(clickedWord, year); })
-      .transition()
-      .duration(1e3)
-      .delay(function (a, b) { return b * 12; })
-      .style('font-size', function (d: any) {
-        return d.size + 'px';
-      }).style('fill', function (d, i) {
-        return fill(i.toString());
-      }).attr('transform', function (d: any) {
-        return 'translate(' + [d.x, d.y] + ')rotate(' + d.rotate + ')';
-      });
-
-    data
-      .enter()
-      .append('text')
-      .style('font-size', function (d: any) { return d.size + 'px'; })
-      .style('font-family', 'Roboto')
-      .style('cursor', 'pointer')
-      .style('fill', function (d, i) { return fill(i.toString()); })
-      .style('opacity', '0')
-      .attr('text-anchor', 'middle')
-      .attr('transform', function (d: any) {
-        return 'translate(' + [d.x, d.y] + ')rotate(' + d.rotate + ')';
-      })
-      .text(function (d: any) { return d.text; })
-      .on('click', (clickedWord) => {
-        this.onWordClick(clickedWord, year);
-      })
-      .transition()
-      .delay(function (a, b) { return b * 50; })
-      .duration(0.5e3)
-      .style('opacity', '1');
-
-    data
-      .exit()
-      .transition()
-      .delay(function (a, b) { return b * 20; })
-      .duration(0.5e3)
-      .style('opacity', '0')
-      .remove();
-  }
-
-  highlight(word) {
-    let coords = word.rotate == 0 ?
-      {
-        x: word.x + word.x0,
-        y: word.y + word.y0,
-        width: word.x1 - word.x0,
-        height: word.y1
-      } :
-      {
-        x: word.x - word.padding,
-        y: word.y + word.y0 - word.padding,
-        width: word.x1,
-        height: word.y1 - word.y0
-      };
-
-    D3
-      .select('#d3group')
-      .append('rect')
-      .attr('id', 'highlightRect')
-      .attr({
-        'x': coords.x, 'y': coords.y,
-        'width': coords.width, 'height': coords.height
-      })
-      .attr('fill', 'none')
-      .attr('stroke', 'yellow')
-      .attr('stroke-width', '2')
-      .attr('class', 'hvr-pulse-grow');
+  ngOnDestroy = () => {
+    this.subscription.unsubscribe();
   }
 }
+

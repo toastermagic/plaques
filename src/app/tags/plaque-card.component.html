@@ -1,10 +1,9 @@
-<div>
-    <md-card *ngIf="plaque">
-        <md-card-title>
-            <h2> {{ plaque.title }} </h2>
-        </md-card-title>
-        <md-card-content>
-            {{ plaque.description }}
-        </md-card-content>
-    </md-card>
-</div>
+<md-card [ngStyle]="cardStyle">
+    <img style="width: {{ cardStyle.width + 'px' }}; height: {{ cardStyle.width + 'px' }}" src="{{ plaque.thumbnail_url }}">
+    <md-content layout="column" layout-fill layout-align="center center">
+        {{ plaque.title }}
+    </md-content>
+    <md-card-actions layout="row" layout-align="end end">
+        <button md-button class="md-raised md-primary">Show</button>
+    </md-card-actions>
+</md-card>

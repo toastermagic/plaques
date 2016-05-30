@@ -14,6 +14,16 @@
 			"showOutput": "silent",
 			"args": [
 			]
+		},
+		{
+			"taskName": "lint",
+			"echoCommand": true,
+			"isBuildCommand": false,
+            "isWatching": false,
+            "problemMatcher": ["$tsc"],
+			"showOutput": "silent",
+			"args": [
+			]
 		}
 	]
 }
