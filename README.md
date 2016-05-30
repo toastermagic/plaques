@@ -10,6 +10,8 @@ To see it:
 
 `npm i`
 
+`typings install`
+
 If you use VSCode:
 
 `code .`
@@ -21,3 +23,5 @@ otherwise:
 `gulp build`
 
 `node dist/server/app.js`
+
+serves on `http://localhost:5000`
