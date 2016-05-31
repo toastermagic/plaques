@@ -12,34 +12,26 @@ export class PlaqueCardComponent implements OnInit {
     @Input()
     hand: any;
 
-    @Input()
-    position: number;
-
-    posX: number;
-    posY: number;
     visible: boolean = false;
-    coords: any;
-
-    private cardGap: number;
-    private cardWidth: number;
 
     constructor() {
     }
 
     ngOnInit() {
-        this.cardWidth = (window.innerWidth / 5);
-        this.cardGap = 15;
     }
 
     cardStyle = (index) => {
+        let cardWidth = (window.innerWidth / 5);
+        let cardGap = 15;
+
         let gutter = (window.innerWidth -
-            (this.hand.length * this.cardWidth) - (2 * this.cardGap)) / 2;
+            (this.hand.length * cardWidth) - (2 * cardGap)) / 2;
 
         return {
           position: 'absolute',
           left:
-            gutter + (index) * (this.cardWidth + this.cardGap) + 'px',
-          width: this.cardWidth + 'px',
+            gutter + (index) * (cardWidth + cardGap) + 'px',
+          width: cardWidth + 'px',
         };
     }
 }
