@@ -60,6 +60,10 @@ module.exports = {
         root: path.resolve('./src'),
 
         alias: {
+            'eventEmitter/EventEmitter': 'wolfy87-eventemitter/EventEmitter',
+            'get-style-property': 'desandro-get-style-property',
+            'matches-selector': 'desandro-matches-selector',
+            'classie': 'desandro-classie'
             // 'angular2/core': helpers.root('node_modules/@angular/core/index.js'),
             // 'angular2/testing': helpers.root('node_modules/@angular/core/testing.js'),
             // '@angular/testing': helpers.root('node_modules/@angular/core/testing.js'),
@@ -96,8 +100,7 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                exclude: /node_modules/,
-                loader: 'css'
+                loader: 'style!css'
             },
             {
                 test: /\.html$/,

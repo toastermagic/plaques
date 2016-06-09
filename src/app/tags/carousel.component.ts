@@ -2,6 +2,9 @@ import {EventEmitter, Input, Output, Component, OnInit, OnChanges } from '@angul
 import {HighlightPipe} from '../shared';
 import {MdIcon} from 'ng2-material';
 
+import '../../../node_modules/flickity/dist/flickity.css';
+var flick = require('flickity');
+
 @Component({
     moduleId: '/app/tags/',
     selector: 'sg-carousel',
@@ -37,7 +40,7 @@ export class CarouselComponent implements OnInit, OnChanges {
     }
 
     flickitise() {
-        this.flickity = new Flickity('.gallery', {
+        this.flickity = new flick('.gallery', {
             lazyLoad: 5,
             contain: true,
             useSetGallerySize: false
