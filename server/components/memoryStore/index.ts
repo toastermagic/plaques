@@ -21,10 +21,9 @@ function getSearchKey(obj) {
 function keyDescription(key) {
     switch (key) {
         case '1900':
-            return 'It\'s the turn of the last century, essayists, painters ' +
-                'and poets are being born and dying';
+            return 'It\'s the turn of the last century';
         case '1910':
-            return '1910 - 1920, erections are prevalent';
+            return '1910 - 1920, tablets and erections are prevalent';
         case '1920':
             return 'The roaring twenties were mainly characterised by the veneration of bridges';
         case '1930':
@@ -34,9 +33,9 @@ function keyDescription(key) {
         case '1950':
             return 'Poets, novelists, and statesmen die - while Bristol get\'s a mention';
         case '1960':
-            return 'Writers take top spot in this decade, along with the names of former kings';
+            return 'Writers take top spot in this decade';
         case '1970':
-            return 'The 70s: architects, painters, and men named John.';
+            return 'The 70s: architects, painters and novelists.';
         case '1980':
             return 'Manchester was a very popular place to be in the 80s';
         case '1990':
@@ -106,37 +105,17 @@ export default (path) => {
                 return p.inscription && p.erected;
             });
 
+            var excludeList = cloud.topWordList(tagPlaques, { topN: 50 });
+
             var clouds = cloud.cloudThis(
                 tagPlaques,
                 'id',
                 'erected_decade',
                 'inscription',
-                'title',
                 {
                     topN: 15,
                     minCount: 1,
-                    exclude: [
-                        'plaque',
-                        'the',
-                        'that',
-                        'first',
-                        'and',
-                        'for',
-                        'here',
-                        'was',
-                        'his',
-                        'from',
-                        'were',
-                        'this',
-                        'with',
-                        'who',
-                        'lived',
-                        'through',
-                        'their',
-                        'these',
-                        'which',
-                        'site',
-                    ],
+                    exclude: excludeList,
                     descriptions: keyDescription
                 });
 

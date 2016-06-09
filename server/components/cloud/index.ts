@@ -1,6 +1,24 @@
 import * as _ from 'underscore';
 
 module.exports = {
+    topWordList: function (objectList, options) {
+        let topN = options.topN || 50;
+
+        var tags = analyseAll(objectList);
+        let words = _(Object.keys(tags))
+            .map((w) => {
+                return {
+                    word: w,
+                    plaqueCount: tags[w]
+                };
+            });
+
+        let sorted = _.sortBy(words, (w) => w.plaqueCount * -1);
+        let topList = _.first(sorted, topN).map((w) => w.word);
+
+        return topList;
+    },
+
     cloudThis: function (objectList, idProp, keyProp, textProp, options) {
         let exclude = options.exclude || [];
         let topN = options.topN || 50;
@@ -48,6 +66,25 @@ function analyseArray(plaques) {
                     freqMap[w] = [{ id: p.id, url: p.main_photo, inscription: p.inscription }];
                 } else {
                     freqMap[w].push({ id: p.id, url: p.main_photo, inscription: p.inscription });
+                }
+            }
+        });
+    });
+
+    return freqMap;
+}
+
+function analyseAll(plaques) {
+    let freqMap = {};
+
+    plaques.forEach((p) => {
+        var wordsplit = p.inscription.toLowerCase().replace(/[.,0-9\-\(\)]/g, '').split(/\s/);
+        wordsplit.forEach((w) => {
+            if (w.length > 2) {
+                if (!freqMap[w]) {
+                    freqMap[w] = 1;
+                } else {
+                    freqMap[w]++;
                 }
             }
         });
