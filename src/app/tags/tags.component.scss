@@ -11,9 +11,18 @@
     position: absolute;
     transition: all 750ms ease-in-out;
     -webkit-transition: all 750ms ease-in-out;
+    opacity: 0;
 }
 
 .decade-description {
     width: 100%;
     margin-top:5px; 
+}
+
+.noAnimate {
+  -webkit-transition: none !important;
+  -moz-transition: none !important;
+  -ms-transition: none !important;
+  -o-transition: none !important;
+  transition: none !important;
 }
