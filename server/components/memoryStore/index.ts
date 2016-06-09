@@ -5,51 +5,118 @@ import * as _ from 'underscore';
 var fs = require('fs');
 var cloud = require('../cloud');
 var parse = require('csv-parse');
+var plaques = [];
 
-function rowMatch(terms, row) {
-    var isMatch = true;
-    for (var index = 0; index < terms.length; index++) {
-        isMatch = isMatch && row.indexOf(terms[index]) > -1;
-    }
-    return isMatch;
-}
+function fileExists(filePath) {
+    var p = new Promise((res, rej) => {
+        try {
+            fs.stat(filePath, (err, stats) => {
+                if (err) {
+                    res(false);
+                    return;
+                }
 
-function getSearchKey(obj) {
-    return (obj.inscription).toLowerCase();
-}
+                if (stats.isFile()) {
+                    res(true);
+                } else {
+                    res(false);
+                }
+            });
+        } catch (err) {
+            res(false);
+        }
+    });
 
-function keyDescription(key) {
-    switch (key) {
-        case '1900':
-            return 'It\'s the turn of the last century';
-        case '1910':
-            return '1910 - 1920, tablets and erections are prevalent';
-        case '1920':
-            return 'The roaring twenties were mainly characterised by the veneration of bridges';
-        case '1930':
-            return 'John and George seem to be popular names';
-        case '1940':
-            return 'The 1940s, and a great conflict is commemorated';
-        case '1950':
-            return 'Poets, novelists, and statesmen die - while Bristol get\'s a mention';
-        case '1960':
-            return 'Writers take top spot in this decade';
-        case '1970':
-            return 'The 70s: architects, painters and novelists.';
-        case '1980':
-            return 'Manchester was a very popular place to be in the 80s';
-        case '1990':
-            return 'The words \'school\', \'world\' and \'pioneer\' all feature for the first time';
-        case '2000':
-            return 'A century is celebrated, and the renaissance of Leeds begins';
-        case '2010':
-            return 'The most common words on plaques of each decade';
-    }
+    return p;
 }
 
 export default (path) => {
     var ready = false;
-    var plaques = [];
+    var excludeList = [];
+
+    function keyDescription(key) {
+        switch (key) {
+            case '1900':
+                return 'It\'s the turn of the last century';
+            case '1910':
+                return '1910 - 1920, tablets and erections are prevalent';
+            case '1920':
+                return 'The roaring twenties were mainly characterised ' +
+                        'by the veneration of bridges';
+            case '1930':
+                return 'John and George seem to be popular names';
+            case '1940':
+                return 'The 1940s, and a great conflict is commemorated';
+            case '1950':
+                return 'Poets, novelists, and statesmen die - while Bristol get\'s a mention';
+            case '1960':
+                return 'Writers take top spot in this decade';
+            case '1970':
+                return 'The 70s: architects, painters and novelists.';
+            case '1980':
+                return 'Manchester was a very popular place to be in the 80s';
+            case '1990':
+                return 'The words \'school\', \'world\' and \'pioneer\' all feature' +
+                        'for the first time';
+            case '2000':
+                return 'A century is celebrated, and the renaissance of Leeds begins';
+            case '2010':
+                return 'The most common words on plaques of each decade';
+        }
+    }
+
+    function rowMatch(terms, row) {
+        var isMatch = true;
+        for (var index = 0; index < terms.length; index++) {
+            isMatch = isMatch && row.indexOf(terms[index]) > -1;
+        }
+        return isMatch;
+    }
+
+    function getSearchKey(obj) {
+        return (obj.inscription).toLowerCase();
+    }
+
+    function readParsedFile(filepath) {
+        var p = new Promise<any>((res, rej) => {
+            fs.readFile(filepath, (err, data) => {
+                if (err) {
+                    rej(err);
+                } else {
+                    plaques = JSON.parse(data);
+                    res(plaques);
+                }
+            });
+        });
+
+        return p;
+    }
+
+    function generateExcludeList() {
+        fileExists(path + 'topWords.json')
+            .then((found) => {
+                if (found) {
+                    fs.readFile(path + 'topWords.json', (err, data) => {
+                        if (err) {
+                            console.log('could not read exclude list');
+                            return;
+                        }
+                        excludeList = JSON.parse(data);
+                        console.log('read existing topwordslist', data.length, 'entries');
+                    });
+                } else {
+                    console.log('generating top words list');
+                    excludeList = cloud.topWordList(plaques, { topN: 50 });
+                    fs.writeFile(path + 'topWords.json', JSON.stringify(excludeList), (err) => {
+                        if (!err) {
+                            console.log('written topwordslist');
+                        } else {
+                            console.log('could not write topwordslist');
+                        }
+                    });
+                }
+            });
+    }
 
     return {
         connect: function () {
@@ -59,38 +126,43 @@ export default (path) => {
             ready = true;
             console.log('memory store initialising', path);
 
-            var parser = parse({ delimiter: ',' }, function (err, data) {
-                var cols = data[0];
-                for (var index = 1; index < data.length; index++) {
-                    var newPlaque: any = _.object(cols, data[index]);
-                    if (newPlaque.main_photo) {
-                        newPlaque.search_key = getSearchKey(newPlaque);
-                        plaques.push(newPlaque);
+            fileExists(path + 'plaques.parsed.json')
+                .then((found) => {
+                    if (found) {
+                        console.log('found pre-parsed data');
+                        readParsedFile(path + 'plaques.parsed.json')
+                            .then((data) => {
+                                plaques = data;
+                                console.log('data read:', plaques.length, 'plaques');
+
+                                generateExcludeList();
+                            });
+                    } else {
+                        var parser = parse({ delimiter: ',' }, function (err, data) {
+                            var cols = data[0];
+                            for (var index = 1; index < data.length; index++) {
+                                var newPlaque: any = _.object(cols, data[index]);
+                                if (newPlaque.main_photo) {
+                                    newPlaque.search_key = getSearchKey(newPlaque);
+                                    plaques.push(newPlaque);
+                                }
+                            }
+
+                            generateExcludeList();
+
+                            fs.writeFile(path + 'plaques.parsed.json',
+                                JSON.stringify(plaques), (writeErr) => {
+                                    if (!err) {
+                                        console.log('parsed file written ok');
+                                    } else {
+                                        console.log('failed to write parsed file', writeErr);
+                                    }
+                                });
+                        });
+
+                        fs.createReadStream(path + 'open-plaques-all-2016-05-22.csv').pipe(parser);
                     }
-                }
-                console.log('data parsed:', plaques.length, 'plaques');
-            });
-
-            fs.createReadStream(path).pipe(parser);
-
-            // fs.readFile(path, function (err, data) {
-            //     console.log('err', err);
-            //     if (err) { throw err; }
-            //     console.log('data read', data.length, 'bytes');
-            //     var temp = JSON.parse(data);
-            //     console.log('data parsed', Object.keys(temp).length);
-
-            //     for (var key in temp) {
-            //         if (temp.hasOwnProperty(key)) {
-            //             if (temp[key].thumbnail_url) {
-            //                 temp[key].SearchKey = getSearchKey(temp[key]);
-            //                 plaques.unshift(temp[key]);
-            //             }
-            //         }
-            //     }
-
-            //     console.log('plaques in list', plaques.length);
-            // });
+                });
         },
         tags: function () {
             var tagPlaques = _.filter(plaques, function (p) {
@@ -104,8 +176,6 @@ export default (path) => {
                 p.erected_decade = p.erected.substring(0, 3) + '0';
                 return p.inscription && p.erected;
             });
-
-            var excludeList = cloud.topWordList(tagPlaques, { topN: 50 });
 
             var clouds = cloud.cloudThis(
                 tagPlaques,
@@ -125,7 +195,7 @@ export default (path) => {
             var found = _.find(plaques, { 'id': plaqueId });
             return Promise.resolve(found);
         },
-        getByIdList: function(list) {
+        getByIdList: function (list) {
             console.log(list);
             return Promise.resolve();
         },

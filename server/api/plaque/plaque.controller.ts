@@ -3,7 +3,7 @@
 import * as _ from 'underscore';
 import * as repositoryFactory from '../../components/memoryStore';
 
-var repo = repositoryFactory.default('./data/open-plaques-all-2016-05-22.csv');
+var repo = repositoryFactory.default('./data/');
 repo.connect();
 
 exports.search = function(req, res) {
