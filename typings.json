@@ -12,6 +12,7 @@
     "express": "registry:dt/express#4.0.0+20160317120654",
     "express-serve-static-core": "registry:dt/express-serve-static-core#0.0.0+20160322035842",
     "firebase": "registry:dt/firebase#2.4.1+20160412125105",
+    "flickity": "registry:dt/flickity#1.1.1+20160220210120",
     "jasmine": "registry:dt/jasmine#2.2.0+20160412134438",
     "lodash": "registry:dt/lodash#3.10.0+20160330154726",
     "mime": "registry:dt/mime#0.0.0+20160316155526",
@@ -20,7 +21,8 @@
     "require": "registry:dt/require#2.1.20+20160316155526",
     "selenium-webdriver": "registry:dt/selenium-webdriver#2.44.0+20160317120654",
     "serve-favicon": "registry:dt/serve-favicon#0.0.0+20160316155526",
-    "serve-static": "registry:dt/serve-static#0.0.0+20160501131543"
+    "serve-static": "registry:dt/serve-static#0.0.0+20160501131543",
+    "underscore": "registry:dt/underscore#1.7.0+20160505190121"
   },
   "resolution": {
     "main": "typings/main",

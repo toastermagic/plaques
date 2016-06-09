@@ -109,19 +109,14 @@ gulp.task('compile:server', function () {
 gulp.task("ts-babel", function () {
     var babel = require("gulp-babel");
     var rename = require("gulp-rename");
+    var sourcemaps = require('gulp-sourcemaps');
+    
     // Using my existing tsconfig.json file
-
     var tsProject = ts.createProject('./server/tsconfig.json');
  
-    // The `base` part is needed so
-    //  that `dest()` doesnt map folders correctly after rename
     return gulp.src(["server/**/*.ts"], { base: "./server" })
+        .pipe(sourcemaps.init())
         .pipe(ts(tsProject))
-        // .pipe(babel({
-        //     presets: ['es2015']    
-        // }))
-        // .pipe(rename(function (path) {
-        //     path.extname = ".js";
-        // }))
+        .pipe(sourcemaps.write())
         .pipe(gulp.dest("./dist/server"));
 });

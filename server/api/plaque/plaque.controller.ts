@@ -1,10 +1,10 @@
 'use strict';
 
-import * as _ from 'lodash';
+import * as _ from 'underscore';
 import * as repositoryFactory from '../../components/memoryStore';
 
-var repo = repositoryFactory.default('./data/gb_20151004.json');
-repo.connect()
+var repo = repositoryFactory.default('./data/open-plaques-all-2016-05-22.csv');
+repo.connect();
 
 exports.search = function(req, res) {
     repo
@@ -38,10 +38,11 @@ exports.show = function(req, res) {
     });
 };
 
-exports.tags = function(req, res) {
-    repo
-    .tags()
-    .then(function(results) {
-        res.json(results);
-    });
+exports.tags = function (req, res) {
+    res.sendFile('/plaques/data/cloud.json');
+    // repo
+    //     .tags()
+    //     .then(function (results) {
+    //     res.json(results);
+    // });
 };
