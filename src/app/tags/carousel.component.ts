@@ -5,8 +5,8 @@ import {MdIcon} from 'ng2-material';
 @Component({
     moduleId: '/app/tags/',
     selector: 'sg-carousel',
-    templateUrl: 'carousel.component.html',
-    styleUrls : ['carousel.component.scss'],
+    template: require('./carousel.component.html'),
+    styles : [require('./carousel.component.scss')],
     pipes: [HighlightPipe],
     directives: [ MdIcon ]
 })
