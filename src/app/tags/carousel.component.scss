@@ -1,3 +1,10 @@
+.close-button {
+    position: absolute; 
+    right: 50px; 
+    top: -30px;
+    opacity: 0;
+}
+
 /* fade in image when loaded */
 .gallery-image {
   transition: opacity 0.4s;
@@ -10,9 +17,15 @@
 }
 
 .gallery {
+    transition: opacity 0.4s;
+    opacity: 0;
     height: 50vh;
     width: 100%;
     background: #eee;
+}
+
+.galleryOpen {
+    opacity: 1;
 }
 
 .gallery-cell {
@@ -33,7 +46,7 @@
     text-align: left;
     max-width: 100%;
     max-height: 40%; 
-    overflow-y: auto
+    overflow-y: auto;
 }
 
 .highlighted {

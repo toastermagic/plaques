@@ -24,6 +24,8 @@ export class CarouselComponent implements OnInit, OnChanges {
     onClose = new EventEmitter<void>();
 
     flickity: Flickity;
+    galleryOpen = false;
+
     constructor() {}
 
     ngOnInit() { }
@@ -36,7 +38,10 @@ export class CarouselComponent implements OnInit, OnChanges {
     }
 
     close() {
-        this.onClose.emit(null);
+        this.galleryOpen = false;
+        setTimeout(() => {
+            this.onClose.emit(null);
+        }, 250);
     }
 
     flickitise() {
@@ -46,5 +51,9 @@ export class CarouselComponent implements OnInit, OnChanges {
             contain: true,
             useSetGallerySize: false
         });
+
+        setTimeout(() => {
+            this.galleryOpen = true;
+        }, 0);
     }
 }

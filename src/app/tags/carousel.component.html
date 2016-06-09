@@ -1,7 +1,7 @@
-<button md-fab class="md-raised md-primary" style="position: absolute; right: 50px; top: -30px" (click)="close()">
+<button md-fab [ngClass]="{ galleryOpen: galleryOpen }" class="close-button md-raised md-primary" (click)="close()">
     <icon class="md-icon">done</icon>
 </button>
-<div class="gallery">
+<div class="gallery" [ngClass]="{ galleryOpen: galleryOpen }">
     <div class="gallery-cell" *ngFor="let card of hand">
         <img class="gallery-image" [attr.data-flickity-lazyload]="card.url">
         <div class="image-inscription" [innerHtml]="card.inscription | sgHighlightPipe: [word]"></div>
