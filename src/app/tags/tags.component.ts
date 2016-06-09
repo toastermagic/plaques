@@ -46,12 +46,12 @@ export class TagsComponent implements OnInit, OnDestroy {
 
     window.onresize = () => {
       this.onResize(() => {
-        this.handTop = (window.innerHeight / 6) + 'px';
+        this.handTop = (window.innerHeight / 4) + 'px';
         this.showYear(this.selectedYear);
       });
     };
 
-    this.handTop = (window.innerHeight / 6) + 'px';
+    this.handTop = (window.innerHeight / 4) + 'px';
   }
 
   ngOnInit() {
@@ -135,7 +135,7 @@ export class TagsComponent implements OnInit, OnDestroy {
         .duration(250)
         .delay((a, b) => b * 50)
         .style('opacity', '0')
-        // .remove()
+        .remove()
         .call(this.endAll, () => {
           finishedA.next(true);
           finishedA.complete();
@@ -186,9 +186,6 @@ export class TagsComponent implements OnInit, OnDestroy {
 
     data
       .on('click', (clickedWord) => { this.onWordClick(clickedWord); })
-      // .transition()
-      // .duration(() => 500 + Math.random() * 500)
-      // .delay((a, b) => b * 20)
       .each((a, b) => {
         setTimeout(() => {
           D3
@@ -207,6 +204,7 @@ export class TagsComponent implements OnInit, OnDestroy {
       .append('div')
       .attr('id', (d) => d.id)
       .classed('tagWord', true)
+      .classed('noAnimate', true)
       .on('click', (clickedWord) => { this.onWordClick(clickedWord); })
       .style('font-family', 'Roboto')
       .style('font-size', (d) => d.size + 'px')
@@ -215,11 +213,15 @@ export class TagsComponent implements OnInit, OnDestroy {
       .style('top', (d) => d.y - 20 + ((window.innerHeight) / 2) + 'px')
       .style('transform', (d) => 'translate(-50%, -87%) rotate(' + d.rotate + 'deg)')
       .text((d) => d.id)
-      .style('opacity', '0')
       .transition()
       .delay((a, b) => b * 50)
       .duration(0.5e3)
-      .style('opacity', '1');
+      .style('opacity', '1')
+      .each('start', (a, b) => {
+        D3
+          .select('#' + a.id)
+          .classed('noAnimate', false);
+      });
 
     data
       .exit()

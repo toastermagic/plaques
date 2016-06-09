@@ -41,6 +41,7 @@ export class CarouselComponent implements OnInit, OnChanges {
 
     flickitise() {
         this.flickity = new flick('.gallery', {
+            initialIndex: this.hand.length > 1 ? 1 : 0,
             lazyLoad: 5,
             contain: true,
             useSetGallerySize: false
