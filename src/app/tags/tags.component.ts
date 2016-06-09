@@ -10,9 +10,7 @@ import {MATERIAL_DIRECTIVES} from 'ng2-material';
 // import {Observable} from 'rxjs/Observable';
 import {Subscription} from 'rxjs/Subscription';
 import {Subject} from 'rxjs/Subject';
-
 import {HighlightPipe, PlaqueService} from '../shared';
-
 import {CarouselComponent} from './carousel.component';
 
 const cloud: any = require('d3-cloud');
@@ -137,7 +135,7 @@ export class TagsComponent implements OnInit, OnDestroy {
         .duration(250)
         .delay((a, b) => b * 50)
         .style('opacity', '0')
-        .remove()
+        // .remove()
         .call(this.endAll, () => {
           finishedA.next(true);
           finishedA.complete();
@@ -198,6 +196,7 @@ export class TagsComponent implements OnInit, OnDestroy {
             .style('transform', (d) => 'translate(-50%, -87%) rotate(' + d.rotate + 'deg)')
             .style('font-size', (d) => d.size + 'px')
             .style('color', () => fill(b.toString()))
+            .style('opacity', '1')
             .style('left', (d) => d.x + ((window.innerWidth) / 2) + 'px')
             .style('top', (d) => d.y - 20 + ((window.innerHeight) / 2) + 'px');
         }, b * 50);

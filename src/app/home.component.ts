@@ -6,11 +6,13 @@ import {MdIcon} from 'ng2-material';
 import {PlaquesComponent} from './plaques';
 import {TagsComponent} from './tags';
 
+import '../../node_modules/ng2-material/ng2-material.css';
+
 @Component({
   moduleId: 'app/',
   selector: 'sg-plaques',
   template: require('./home.component.html'),
-  styles: [require('./home.component.scss')],
+  styles: [ require('./home.component.scss') ],
   directives: [MdIcon, MdToolbar, ROUTER_DIRECTIVES, TagsComponent]
 })
 @Routes([
@@ -18,5 +20,5 @@ import {TagsComponent} from './tags';
   new Route({path: '/tags', component: TagsComponent}),
 ])
 export class HomeComponent {
-  constructor() { console.log('home constructed'); }
+  constructor() { }
 }
