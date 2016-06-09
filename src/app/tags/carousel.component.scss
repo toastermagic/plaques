@@ -1,0 +1,38 @@
+/* fade in image when loaded */
+.gallery-image {
+  transition: opacity 0.4s;
+  opacity: 0;
+}
+
+.gallery-image.flickity-lazyloaded,
+.gallery-image.flickity-lazyerror {
+  opacity: 1;
+}
+
+.gallery {
+    height: 400px;
+    z-index:9999;
+    width: 100%;
+    background: #eee;
+}
+
+.gallery-cell {
+    text-align: center;
+    height: 100%;
+    width: 33%;
+}
+
+.gallery-image {
+    height:180px;
+    margin:10px;
+    text-align: center;
+}
+
+.image-inscription {
+    padding: 10px;
+    margin-bottom: 10px;
+    text-align: left;
+    max-width:100%;
+    max-height:150px; 
+    overflow-y: auto
+}

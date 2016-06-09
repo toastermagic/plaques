@@ -1,65 +1,57 @@
-var _ = require('lodash');
+import * as _ from 'underscore';
 
 module.exports = {
     cloudThis: function (objectList, idProp, keyProp, textProp, options) {
         let exclude = options.exclude || [];
         let topN = options.topN || 50;
         let minCount = options.minCount || 1;
-        let descFinder = options.descriptions || function(){ return null; };
+        let descFinder = options.descriptions || function () { return null; };
 
-        // text by key
-        var results = _.reduce(objectList, function (clouds, obj) {
-            var objKey = obj[keyProp];
-
-            var existing = _.filter(clouds, { 'key': objKey })[0];
-
-            if (existing) {
-                makeCloud(obj[textProp], obj[idProp], existing.cloud);
-            } else {
-                var newCloud = makeCloud(obj[textProp], obj[idProp]);
-
-                clouds.push({
-                    key: objKey,
-                    cloud: newCloud,
-                    description: descFinder(objKey)
-                });
-            }
-
-            return clouds;
-        }, []);
-
-        _(results).forEach(function (r) {
-            r.cloud = _(Object.keys(r.cloud))
-                .filter(function(w) { return exclude.indexOf(w) === -1; })
-                .filter(function(w) { return r.cloud[w].length > minCount; })
-                .sortBy(function (w) { return r.cloud[w].length * -1; })
-                .map(function(w) {
-                    return {word: w, count: r.cloud[w].length, plaques: _.uniq(r.cloud[w]) }; })
-                .take(topN)
-                .value();
+        var plaqueLists = _.groupBy(objectList, (o) => {
+            return o[keyProp];
         });
 
-        return results;
+        let toplist = _.map(Object.keys(plaqueLists), function (key) {
+            var tags = analyseArray(plaqueLists[key]);
+            let words = _(Object.keys(tags))
+                .filter((w) => exclude.indexOf(w) === -1)
+                .map((w) => {
+                    return {
+                        word: w,
+                        plaques: _.uniq(tags[w], (t) => t.id)
+                    };
+                })
+                .filter((w) => w.plaques.length > minCount);
+
+            let sorted = _.sortBy(words, (w) => w.plaques.length * -1);
+            let top10 = _.first(sorted, topN);
+
+            return {
+                key: key,
+                words: top10,
+                description: descFinder(key)
+            };
+        });
+
+        return toplist;
     }
 };
 
-function makeCloud(text, id, existing?) {
-    var freqMap = existing || {};
+function analyseArray(plaques) {
+    let freqMap = {};
 
-    var wordsplit = text.toLowerCase().replace(/[.,0-9\-\(\)]/g, '').split(/\s/);
-    wordsplit.forEach(function (w) {
-        if (w.length > 2) {
-            addWord(freqMap, w, id);
-        }
+    plaques.forEach((p) => {
+        var wordsplit = p.inscription.toLowerCase().replace(/[.,0-9\-\(\)]/g, '').split(/\s/);
+        wordsplit.forEach((w) => {
+            if (w.length > 2) {
+                if (!freqMap[w]) {
+                    freqMap[w] = [{ id: p.id, url: p.main_photo, inscription: p.inscription }];
+                } else {
+                    freqMap[w].push({ id: p.id, url: p.main_photo, inscription: p.inscription });
+                }
+            }
+        });
     });
 
     return freqMap;
-}
-
-function addWord(collection, word, id) {
-    if (!collection[word]) {
-        collection[word] = [id];
-    } else {
-        collection[word].push(id);
-    }
 }

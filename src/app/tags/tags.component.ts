@@ -13,7 +13,7 @@ import {Subject} from 'rxjs/Subject';
 
 import {HighlightPipe, PlaqueService} from '../shared';
 
-import {PlaqueCardComponent} from './plaque-card.component';
+import {CarouselComponent} from './carousel.component';
 
 const cloud: any = require('d3-cloud');
 
@@ -23,7 +23,7 @@ const cloud: any = require('d3-cloud');
   template: require('./tags.component.html'),
   styles: [require('./tags.component.scss')],
   pipes: [HighlightPipe],
-  directives: [MATERIAL_DIRECTIVES, MD_SIDENAV_DIRECTIVES, PlaqueCardComponent],
+  directives: [MATERIAL_DIRECTIVES, MD_SIDENAV_DIRECTIVES, CarouselComponent],
   encapsulation: ViewEncapsulation.None
 })
 export class TagsComponent implements OnInit, OnDestroy {
@@ -121,32 +121,32 @@ export class TagsComponent implements OnInit, OnDestroy {
   }
 
   onWordClick = (word) => {
-    this.selectedWord = word;
 
-    let available = _.clone(word.plaques);
-    let requests = [];
+    this.hand = word.plaques;
+    // let available = _.clone(word.plaques);
+    // let requests = [];
 
-    this.showIndex = 0;
+    // this.showIndex = 0;
 
-    while (available.length > 0 && requests.length < 3) {
-      let next = available.pop();
-      let obs = this.plaqueService.getPlaque(next);
-      requests.push(obs);
-      this.showIndex++;
-    }
+    // while (available.length > 0 && requests.length < 3) {
+    //   let next = available.pop();
+    //   let obs = this.plaqueService.getPlaque(next);
+    //   requests.push(obs);
+    //   this.showIndex++;
+    // }
 
-    this
-      .scram(word)
-      .combineLatest(requests)
-      .subscribe(
-      (result) => {
-        // result will have 'scram' at index 0, so remove it
-        result.splice(0, 1);
-        this.onDeal.next(result);
-      },
-      (err) => {
-        console.log(err);
-      });
+    // this
+    //   .scram(word)
+    //   .combineLatest(requests)
+    //   .subscribe(
+    //   (result) => {
+    //     // result will have 'scram' at index 0, so remove it
+    //     result.splice(0, 1);
+    //     this.onDeal.next(result);
+    //   },
+    //   (err) => {
+    //     console.log(err);
+    //   });
   }
 
   deal = (cards) => {
@@ -197,10 +197,10 @@ export class TagsComponent implements OnInit, OnDestroy {
   makeCloud = (year?) => {
     year = year || this.selectedYear;
 
-    let tags = year.cloud.map((d) => {
-      return { id: d.word, plaques: d.plaques, text: d.word, count: d.count };
+    let tags = year.words.map((d) => {
+      return { id: d.word, plaques: d.plaques };
     });
-    var max = D3.max(tags, (t: any) => t.count);
+    var max = D3.max(tags, (t: any) => t.plaques.length);
     var maxFont = (window.innerWidth / 1600) * 120;
     let scale = D3.scale.linear().domain([0, max]).range([10, maxFont]);
 
@@ -210,7 +210,7 @@ export class TagsComponent implements OnInit, OnDestroy {
       .padding(window.innerWidth / 100)
       .rotate(() => Math.random() > 0.5 ? 90 : 0)
       .font('Roboto')
-      .fontSize((d) => Math.floor(scale(d.count)))
+      .fontSize((d) => Math.floor(scale(d.plaques.length)))
       .on('end', (words) => {
         this.onWordCloud.next(words);
       }).start();
@@ -289,13 +289,14 @@ export class TagsComponent implements OnInit, OnDestroy {
     data
       .on('click', (clickedWord) => { this.onWordClick(clickedWord); })
       .transition()
-      .delay((a, b) => b * 20)
       .duration(() => 500 + Math.random() * 500)
+      .delay((a, b) => b * 20)
       .each('start', (a, b) => {
         D3
           .select('#' + a.id)
           .style('transform', (d) => 'translate(-50%, -87%) rotate(' + d.rotate + 'deg)');
       })
+      // .style('transform', (d) => 'translate(-50%, -87%) rotate(' + d.rotate + 'deg)')
       .style('font-size', (d) => d.size + 'px')
       .style('color', (d, i) => fill(i.toString()))
       .style('left', (d) => d.x + ((window.innerWidth) / 2) + 'px')
@@ -304,7 +305,7 @@ export class TagsComponent implements OnInit, OnDestroy {
     data
       .enter()
       .append('div')
-      .attr('id', (d) => d.text)
+      .attr('id', (d) => d.id)
       .classed('tagWord', true)
       .on('click', (clickedWord) => { this.onWordClick(clickedWord); })
       .style('font-family', 'Roboto')
@@ -313,7 +314,7 @@ export class TagsComponent implements OnInit, OnDestroy {
       .style('left', (d) => d.x + ((window.innerWidth) / 2) + 'px')
       .style('top', (d) => d.y - 20 + ((window.innerHeight) / 2) + 'px')
       .style('transform', (d) => 'translate(-50%, -87%) rotate(' + d.rotate + 'deg)')
-      .text((d) => d.text)
+      .text((d) => d.id)
       .style('opacity', '0')
       .transition()
       .delay((a, b) => b * 50)

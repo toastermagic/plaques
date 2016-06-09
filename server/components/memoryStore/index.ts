@@ -1,9 +1,10 @@
 /// <reference path="../../../typings/main/index.d.ts"/>
 
 'use strict';
-import * as _ from 'lodash';
+import * as _ from 'underscore';
 var fs = require('fs');
 var cloud = require('../cloud');
+var parse = require('csv-parse');
 
 function rowMatch(terms, row) {
     var isMatch = true;
@@ -14,7 +15,7 @@ function rowMatch(terms, row) {
 }
 
 function getSearchKey(obj) {
-    return (obj.address + obj.area.name + obj.inscription + obj.title).toLowerCase();
+    return (obj.inscription).toLowerCase();
 }
 
 function keyDescription(key) {
@@ -59,39 +60,53 @@ export default (path) => {
             ready = true;
             console.log('memory store initialising', path);
 
-            fs.readFile(path, function (err, data) {
-                console.log('err', err);
-                if (err) { throw err; }
-                console.log('data read', data.length, 'bytes');
-                var temp = JSON.parse(data);
-                console.log('data parsed', Object.keys(temp).length);
-
-                for (var key in temp) {
-                    if (temp.hasOwnProperty(key)) {
-                        if (temp[key].thumbnail_url) {
-                            temp[key].SearchKey = getSearchKey(temp[key]);
-                            plaques.unshift(temp[key]);
-                        }
+            var parser = parse({ delimiter: ',' }, function (err, data) {
+                var cols = data[0];
+                for (var index = 1; index < data.length; index++) {
+                    var newPlaque: any = _.object(cols, data[index]);
+                    if (newPlaque.main_photo) {
+                        newPlaque.search_key = getSearchKey(newPlaque);
+                        plaques.push(newPlaque);
                     }
                 }
-
-                console.log('plaques in list', plaques.length);
+                console.log('data parsed:', plaques.length, 'plaques');
             });
+
+            fs.createReadStream(path).pipe(parser);
+
+            // fs.readFile(path, function (err, data) {
+            //     console.log('err', err);
+            //     if (err) { throw err; }
+            //     console.log('data read', data.length, 'bytes');
+            //     var temp = JSON.parse(data);
+            //     console.log('data parsed', Object.keys(temp).length);
+
+            //     for (var key in temp) {
+            //         if (temp.hasOwnProperty(key)) {
+            //             if (temp[key].thumbnail_url) {
+            //                 temp[key].SearchKey = getSearchKey(temp[key]);
+            //                 plaques.unshift(temp[key]);
+            //             }
+            //         }
+            //     }
+
+            //     console.log('plaques in list', plaques.length);
+            // });
         },
         tags: function () {
             var tagPlaques = _.filter(plaques, function (p) {
-                if (!p.erected_at
-                    || p.erected_at.startsWith('16')
-                    || p.erected_at.startsWith('17')
-                    || p.erected_at.startsWith('18')) {
+                if (!p.erected
+                    || p.erected.startsWith('16')
+                    || p.erected.startsWith('17')
+                    || p.erected.startsWith('18')) {
                     return;
                 }
 
-                p.erected_at_decade = p.erected_at.substring(0, 3) + '0';
-                return p.inscription && p.erected_at;
+                p.erected_decade = p.erected.substring(0, 3) + '0';
+                return p.inscription && p.erected;
             });
 
-            var clouds = cloud.cloudThis(tagPlaques, 'id', 'erected_at_decade', 'inscription', {
+            var clouds = cloud.cloudThis(tagPlaques, 'id', 'erected_decade', 'inscription', {
                 topN: 15,
                 minCount: 1,
                 exclude: [
@@ -122,11 +137,12 @@ export default (path) => {
             return Promise.resolve(clouds);
         },
         getById: function (plaqueId) {
-            var found = _.find(plaques, { 'id': +plaqueId });
+            var found = _.find(plaques, { 'id': plaqueId });
             return Promise.resolve(found);
         },
         getByIdList: function(list) {
             console.log(list);
+            return Promise.resolve();
         },
         list: function () {
 
@@ -162,7 +178,7 @@ export default (path) => {
             while (rowCount < 50 && candidates.length > 0) {
                 var index = Math.floor(Math.random() * candidates.length);
                 var candidate = candidates.splice(index, 1)[0];
-                if (searchTerm === '' || rowMatch(terms, candidate.SearchKey)) {
+                if (searchTerm === '' || rowMatch(terms, candidate.search_key)) {
                     rowCount++;
                     results.push(candidate);
                 }

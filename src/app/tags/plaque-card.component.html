@@ -1,4 +1,4 @@
-<div layout="row" layout-align="center center">
+<!--<div layout="row" layout-align="center center">
     <md-card *ngIf="card" class="animated" [ngClass]="{'zoomIn': card.visible, 'zoomOutLeft': !card.visible}" *ngFor="let card of hand; trackBy:id; let i = index" [ngStyle]="cardStyle(i)">
         <div class="imgContainer">
             <img md-card-image src="{{ card.plaque.thumbnail_url }}">
@@ -7,4 +7,11 @@
             <div>{{ card.plaque.title }}</div>
         </md-content>
     </md-card>
+</div>-->
+<div class="carousel">
+    <div *ngFor="let card of hand">
+        <img src="{{ card.url }}">
+    </div>
 </div>
+
+<!--[attr.data-flickity-lazyload]-->

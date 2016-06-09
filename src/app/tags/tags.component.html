@@ -1,16 +1,10 @@
+<div style="position:absolute; z-index: 2; width:100%" [ngStyle]="{top: handTop}">
+  <sg-carousel *ngIf="hand" [hand]="hand"></sg-carousel>
+</div>
+
 <md-content layout="column" layout-fill layout-align="start center" style="overflow:hidden">
- 
   <div layout="column" layout-fill layout-align="start start" onselectstart="return false">
-    <div style="position:absolute; width:100%" [ngStyle]="{top: handTop}">
-      <sg-plaque-card #plaquecard [hand]="hand" style="width:100%"></sg-plaque-card>
-    </div>
     <div id="d3div" style="flex: 1 1 auto">
-    </div>
-    <div *ngIf="hand.length > 0" style="z-index: 2; width: 100%">
-      <div layout="row" layout-align="center end">
-        <button md-button class="md-raised-button" (click)="goBack()">Back</button>
-        <button md-button class="md-raised-button" (click)="showMore()">More</button>
-      </div>
     </div>
     <div layout="row" layout-align="center" style="width:100%">
       <div layout="row" *ngIf="years" style="overflow-x:auto; padding: 5px">

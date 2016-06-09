@@ -39,10 +39,10 @@ exports.show = function(req, res) {
 };
 
 exports.tags = function (req, res) {
-    res.sendFile('/plaques/data/cloud.json');
-    // repo
-    //     .tags()
-    //     .then(function (results) {
-    //     res.json(results);
-    // });
+    // res.sendFile('/plaques/data/cloud.json');
+    repo
+        .tags()
+        .then(function (results) {
+        res.json(results);
+    });
 };

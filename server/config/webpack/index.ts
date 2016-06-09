@@ -32,7 +32,6 @@ module.exports = {
             //    'angular2/bundles/angular2-polyfills',
             'd3-cloud',
             'ng2-material',
-            // '@angular2-material/button',
             '@angular2-material/core',
             '@angular2-material/checkbox',
             '@angular2-material/grid-list',
@@ -140,8 +139,14 @@ module.exports = {
         }),
         new copyWebpackPlugin([
             // Copy directory contents to {output}/to/directory/ 
-            { from: 'node_modules/ng2-material/ng2-material.css', to: 'node_modules/ng2-material/' },
-            { from: 'node_modules/animate.css/animate.css', to: 'node_modules/animate.css/' }
+            { from: 'node_modules/ng2-material/ng2-material.css',
+                to: 'node_modules/ng2-material/' },
+            { from: 'node_modules/animate.css/animate.css',
+                to: 'node_modules/animate.css/' },
+            { from: 'node_modules/flickity/dist/flickity.css',
+                to: 'node_modules/flickity/dist' },
+            { from: 'node_modules/flickity/dist/flickity.pkgd.js',
+                to: 'node_modules/flickity/dist' }
         ])
     ]
 };

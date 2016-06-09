@@ -1,5 +1,6 @@
-import {Input, Component, OnInit} from '@angular/core';
+import {Input, ElementRef, Component, OnInit} from '@angular/core';
 import {MdCard} from '@angular2-material/card';
+// import {Flickity} from 'flickity';
 
 @Component({
     moduleId: 'app/tags/',
@@ -12,12 +13,22 @@ export class PlaqueCardComponent implements OnInit {
     @Input()
     hand: any;
 
+    flickity: Flickity;
     visible: boolean = false;
 
-    constructor() {
+    private elRef: ElementRef;
+
+    constructor(el: ElementRef) {
+        this.elRef = el;
     }
 
     ngOnInit() {
+        this.flickity = new Flickity('.carousel', {
+            lazyLoad: true,
+            imagesLoaded: true,
+            contain: true,
+            freeScroll: true
+        });
     }
 
     cardStyle = (index) => {
