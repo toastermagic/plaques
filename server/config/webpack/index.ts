@@ -133,16 +133,16 @@ module.exports = {
                 collapseWhitespace: false
             }
         }),
-        new copyWebpackPlugin([
-            // Copy directory contents to {output}/to/directory/ 
-            { from: 'node_modules/ng2-material/ng2-material.css',
-                to: 'node_modules/ng2-material/' },
-            { from: 'node_modules/animate.css/animate.css',
-                to: 'node_modules/animate.css/' },
-            { from: 'node_modules/flickity/dist/flickity.css',
-                to: 'node_modules/flickity/dist' },
-            { from: 'node_modules/flickity/dist/flickity.pkgd.js',
-                to: 'node_modules/flickity/dist' }
-        ])
+        // new copyWebpackPlugin([
+        //     // Copy directory contents to {output}/to/directory/ 
+        //     { from: 'node_modules/ng2-material/ng2-material.css',
+        //         to: 'node_modules/ng2-material/' },
+        //     { from: 'node_modules/animate.css/animate.css',
+        //         to: 'node_modules/animate.css/' },
+        //     { from: 'node_modules/flickity/dist/flickity.css',
+        //         to: 'node_modules/flickity/dist' },
+        //     { from: 'node_modules/flickity/dist/flickity.pkgd.js',
+        //         to: 'node_modules/flickity/dist' }
+        // ])
     ]
 };
