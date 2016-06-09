@@ -1,4 +1,4 @@
-<div class="gallery">
+<div class="gallery" *ngIf="hand.length > 0">
     <div class="gallery-cell" *ngFor="let card of hand">
         <img class="gallery-image" [attr.data-flickity-lazyload]="card.url">
         <div class="image-inscription">{{ card.inscription }}</div>

@@ -5,15 +5,15 @@
     font-size: smaller;
 }
 
-sg-plaque-card {
-    position: absolute;
-}
-
 .tagWord {
     cursor: pointer;
     transform-origin: 50% 87%;
     position: absolute;
-    // transform: 'translate(-50%, -87%) rotate(0deg)';
-    transition: transform 750ms ease-in-out;
-    -webkit-transition: transform 750ms ease-in-out;
+    transition: all 750ms ease-in-out;
+    -webkit-transition: all 750ms ease-in-out;
+}
+
+.decade-description {
+    width: 100%;
+    margin-top:5px; 
 }

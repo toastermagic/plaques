@@ -106,33 +106,39 @@ export default (path) => {
                 return p.inscription && p.erected;
             });
 
-            var clouds = cloud.cloudThis(tagPlaques, 'id', 'erected_decade', 'inscription', {
-                topN: 15,
-                minCount: 1,
-                exclude: [
-                    'plaque',
-                    'the',
-                    'that',
-                    'first',
-                    'and',
-                    'for',
-                    'here',
-                    'was',
-                    'his',
-                    'from',
-                    'were',
-                    'this',
-                    'with',
-                    'who',
-                    'lived',
-                    'through',
-                    'their',
-                    'these',
-                    'which',
-                    'site',
-                ],
-                descriptions: keyDescription
-            });
+            var clouds = cloud.cloudThis(
+                tagPlaques,
+                'id',
+                'erected_decade',
+                'inscription',
+                'title',
+                {
+                    topN: 15,
+                    minCount: 1,
+                    exclude: [
+                        'plaque',
+                        'the',
+                        'that',
+                        'first',
+                        'and',
+                        'for',
+                        'here',
+                        'was',
+                        'his',
+                        'from',
+                        'were',
+                        'this',
+                        'with',
+                        'who',
+                        'lived',
+                        'through',
+                        'their',
+                        'these',
+                        'which',
+                        'site',
+                    ],
+                    descriptions: keyDescription
+                });
 
             return Promise.resolve(clouds);
         },

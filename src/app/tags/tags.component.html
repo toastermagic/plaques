@@ -4,18 +4,20 @@
 
 <md-content layout="column" layout-fill layout-align="start center" style="overflow:hidden">
   <div layout="column" layout-fill layout-align="start start" onselectstart="return false">
-    <div id="d3div" style="flex: 1 1 auto">
+    <div style="flex: 1 1 auto">
+      <div *ngIf="hand.length == 0" id="d3div" style="height:100%; width:100%">
+      </div>
     </div>
     <div layout="row" layout-align="center" style="width:100%">
-      <div layout="row" *ngIf="years" style="overflow-x:auto; padding: 5px">
+      <div layout="row" layout-align="center center" *ngIf="years" style="overflow-x:auto; padding: 5px">
         <div *ngFor="let year of years">
-          <button md-fab class="md-raised md-mini" style="margin:0 5px;" (click)="showYear(year)" [ngClass]="{'md-primary': year !== selectedYear}">
+          <button md-fab class="md-raised" style="margin:0 5px;" (click)="showYear(year)" [ngClass]="{'md-primary': year !== selectedYear, 'md-mini': year !== selectedYear}">
             <div class="fab-text">{{ year.key }}</div>
           </button>
         </div>
       </div>
     </div>
-    <div layout="row" layout-align="center" style="margin-top:5px" *ngIf="selectedYear">
+    <div class="decade-description" layout="row" layout-align="center center" *ngIf="selectedYear">
       {{ selectedYear.description }}
     </div>
   </div>

@@ -288,15 +288,14 @@ export class TagsComponent implements OnInit, OnDestroy {
 
     data
       .on('click', (clickedWord) => { this.onWordClick(clickedWord); })
-      .transition()
-      .duration(() => 500 + Math.random() * 500)
-      .delay((a, b) => b * 20)
-      .each('start', (a, b) => {
+      // .transition()
+      // .duration(() => 500 + Math.random() * 500)
+      // .delay((a, b) => b * 20)
+      .each((a, b) => {
         D3
           .select('#' + a.id)
           .style('transform', (d) => 'translate(-50%, -87%) rotate(' + d.rotate + 'deg)');
       })
-      // .style('transform', (d) => 'translate(-50%, -87%) rotate(' + d.rotate + 'deg)')
       .style('font-size', (d) => d.size + 'px')
       .style('color', (d, i) => fill(i.toString()))
       .style('left', (d) => d.x + ((window.innerWidth) / 2) + 'px')
