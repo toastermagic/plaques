@@ -1,6 +1,9 @@
-<div class="gallery" *ngIf="hand.length > 0">
+<button md-fab class="md-raised md-primary" style="position: absolute; right: 50px; top: -30px" (click)="close()">
+    <icon class="md-icon">done</icon>
+</button>
+<div class="gallery">
     <div class="gallery-cell" *ngFor="let card of hand">
         <img class="gallery-image" [attr.data-flickity-lazyload]="card.url">
-        <div class="image-inscription">{{ card.inscription }}</div>
+        <div class="image-inscription" [innerHtml]="card.inscription | sgHighlightPipe: [word]"></div>
     </div>
 </div>

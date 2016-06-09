@@ -11,7 +11,6 @@
 
 .gallery {
     height: 550px;
-    z-index:9999;
     width: 100%;
     background: #eee;
 }
@@ -35,4 +34,8 @@
     max-width: 100%;
     max-height: 200px; 
     overflow-y: auto
+}
+
+:host >>> .highlighted {
+    background: #ccc;
 }

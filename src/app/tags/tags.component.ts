@@ -31,6 +31,7 @@ export class TagsComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
 
   hand: any = [];
+  word: string;
 
   onDeal: Subject<any> = new Subject<any>();
   onWordCloud = new Subject<any>();
@@ -40,8 +41,6 @@ export class TagsComponent implements OnInit, OnDestroy {
   selectedYear: any;
   years: any;
   description: string;
-  private showIndex: number;
-  private selectedWord: any;
 
   constructor(
     private plaqueService: PlaqueService,
@@ -69,129 +68,21 @@ export class TagsComponent implements OnInit, OnDestroy {
       .subscribe((words) => {
         this.write(words);
       });
-
-    this.onDeal.subscribe((list) => {
-      this.deal(list);
-    });
-  }
-
-  //  undeal hand, then reshow tag cloud
-  goBack = () => {
-    this
-      .undealHand()
-      .subscribe(() => { }, () => { }, () => {
-        this.showYear(this.selectedYear);
-      });
-  }
-
-  showMore = () => {
-    this
-      .undealCard()
-      .subscribe(() => {
-        this
-          .plaqueService
-          .getPlaque(this.selectedWord.plaques[this.showIndex])
-          .subscribe((card) => {
-            this.hand.push({
-              plaque: card,
-              position: this.hand.length + 1,
-              visible: true
-            });
-            this.showIndex++;
-          });
-      });
-  }
-
-  undealCard = () => {
-    let p = new Subject<boolean>();
-
-    if (!this.hand || this.hand.length === 0) {
-      p.next(false);
-    } else {
-      setTimeout(() => {
-        this.hand.shift();
-        // this.hand.splice(0, 1);
-        p.next(true);
-      }, 500 * this.hand.length);
-
-      this.hand[0].visible = false;
-    }
-
-    return p;
   }
 
   onWordClick = (word) => {
-
-    this.hand = word.plaques;
-    // let available = _.clone(word.plaques);
-    // let requests = [];
-
-    // this.showIndex = 0;
-
-    // while (available.length > 0 && requests.length < 3) {
-    //   let next = available.pop();
-    //   let obs = this.plaqueService.getPlaque(next);
-    //   requests.push(obs);
-    //   this.showIndex++;
-    // }
-
-    // this
-    //   .scram(word)
-    //   .combineLatest(requests)
-    //   .subscribe(
-    //   (result) => {
-    //     // result will have 'scram' at index 0, so remove it
-    //     result.splice(0, 1);
-    //     this.onDeal.next(result);
-    //   },
-    //   (err) => {
-    //     console.log(err);
-    //   });
-  }
-
-  deal = (cards) => {
-    for (var index = 0; index < cards.length; index++) {
-      let card = {
-        plaque: cards[index],
-        position: index + 1,
-        visible: true
-      };
-
-      setTimeout(() => {
-        this.hand.push(card);
-      }, 500 * index);
-    };
+    this
+      .scram(word)
+      .subscribe((result) => {
+        this.hand = word.plaques;
+        this.word = word.id;
+      });
   }
 
   showYear = (year) => {
     this.selectedYear = year;
 
     this.makeCloud(year);
-    // this.undealHand()
-    //   .subscribe(() => { }, () => { }, () => { this.layout.start(); });
-  }
-
-  undealHand = () => {
-    let p = new Subject<boolean>();
-
-    if (!this.hand || this.hand.length === 0) {
-      p.complete();
-    } else {
-      setTimeout(() => {
-        this.hand = [];
-        p.complete();
-      }, 500 * this.hand.length);
-
-      for (var index = 0; index < this.hand.length; index++) {
-        let c = this.hand[index];
-
-        setTimeout(() => {
-          c.visible = false;
-        }, 500 * index);
-      }
-    }
-
-    return p;
   }
 
   makeCloud = (year?) => {
@@ -201,19 +92,26 @@ export class TagsComponent implements OnInit, OnDestroy {
       return { id: d.word, plaques: d.plaques };
     });
     var max = D3.max(tags, (t: any) => t.plaques.length);
-    var maxFont = (window.innerWidth / 1600) * 120;
+    var maxFont = (window.innerWidth / 1600) * 100;
     let scale = D3.scale.linear().domain([0, max]).range([10, maxFont]);
 
     cloud()
       .size([window.innerWidth, window.innerHeight - 80])
       .words(tags)
-      .padding(window.innerWidth / 100)
+      .padding(window.innerWidth / 150)
       .rotate(() => Math.random() > 0.5 ? 90 : 0)
       .font('Roboto')
       .fontSize((d) => Math.floor(scale(d.plaques.length)))
       .on('end', (words) => {
         this.onWordCloud.next(words);
       }).start();
+  }
+
+  carouselClose() {
+    this.hand = [];
+    this.word = '';
+
+    this.makeCloud(this.selectedYear);
   }
 
   scram = (exceptWord) => {
@@ -265,8 +163,10 @@ export class TagsComponent implements OnInit, OnDestroy {
         .style('left', (d) => ((window.innerWidth) / 2) + 'px')
         .style('top', (d) => ((window.innerHeight) / 8) + 'px')
         .call(this.endAll, () => {
-          finishedB.next(true);
-          finishedB.complete();
+          setTimeout(() => {
+            finishedB.next(true);
+            finishedB.complete();
+          }, 750);
         });
     }
 
@@ -292,14 +192,16 @@ export class TagsComponent implements OnInit, OnDestroy {
       // .duration(() => 500 + Math.random() * 500)
       // .delay((a, b) => b * 20)
       .each((a, b) => {
-        D3
-          .select('#' + a.id)
-          .style('transform', (d) => 'translate(-50%, -87%) rotate(' + d.rotate + 'deg)');
-      })
-      .style('font-size', (d) => d.size + 'px')
-      .style('color', (d, i) => fill(i.toString()))
-      .style('left', (d) => d.x + ((window.innerWidth) / 2) + 'px')
-      .style('top', (d) => d.y - 20 + ((window.innerHeight) / 2) + 'px');
+        setTimeout(() => {
+          D3
+            .select('#' + a.id)
+            .style('transform', (d) => 'translate(-50%, -87%) rotate(' + d.rotate + 'deg)')
+            .style('font-size', (d) => d.size + 'px')
+            .style('color', () => fill(b.toString()))
+            .style('left', (d) => d.x + ((window.innerWidth) / 2) + 'px')
+            .style('top', (d) => d.y - 20 + ((window.innerHeight) / 2) + 'px');
+        }, b * 50);
+      });
 
     data
       .enter()

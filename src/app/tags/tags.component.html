@@ -1,11 +1,10 @@
-<div style="position:absolute; z-index: 2; width:100%" [ngStyle]="{top: handTop}">
-  <sg-carousel *ngIf="hand" [hand]="hand"></sg-carousel>
-</div>
-
 <md-content layout="column" layout-fill layout-align="start center" style="overflow:hidden">
+  <div style="position:absolute; width:100%; z-index: 2" [ngStyle]="{top: handTop}">
+    <sg-carousel *ngIf="hand.length > 0" (onClose)="carouselClose()" [hand]="hand" [word]="word"></sg-carousel>
+  </div>
   <div layout="column" layout-fill layout-align="start start" onselectstart="return false">
     <div style="flex: 1 1 auto">
-      <div *ngIf="hand.length == 0" id="d3div" style="height:100%; width:100%">
+      <div id="d3div" style="height:100%; width:100%">
       </div>
     </div>
     <div layout="row" layout-align="center" style="width:100%">
