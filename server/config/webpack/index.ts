@@ -32,6 +32,7 @@ module.exports = {
             //    'angular2/bundles/angular2-polyfills',
             'd3-cloud',
             'ng2-material',
+            'flickicity',
             '@angular2-material/core',
             '@angular2-material/checkbox',
             '@angular2-material/grid-list',
@@ -64,14 +65,6 @@ module.exports = {
             'get-style-property': 'desandro-get-style-property',
             'matches-selector': 'desandro-matches-selector',
             'classie': 'desandro-classie'
-            // 'angular2/core': helpers.root('node_modules/@angular/core/index.js'),
-            // 'angular2/testing': helpers.root('node_modules/@angular/core/testing.js'),
-            // '@angular/testing': helpers.root('node_modules/@angular/core/testing.js'),
-            // 'angular2/platform/browser':
-            //     helpers.root('node_modules/@angular/platform-browser/index.js'),
-            // 'angular2/router': helpers.root('node_modules/@angular/router-deprecated/index.js'),
-            // 'angular2/http': helpers.root('node_modules/@angular/http/index.js'),
-            // 'angular2/http/testing': helpers.root('node_modules/@angular/http/testing.js')
         }
     },
 
