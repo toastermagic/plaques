@@ -2,7 +2,8 @@
     <icon class="md-icon">done</icon>
 </button>
 <div class="gallery" [ngClass]="{ galleryOpen: galleryOpen }">
-    <div class="gallery-cell" *ngFor="let card of hand">
+    <div class="gallery-cell" *ngFor="let card of hand" layout="column" layout-align="center center">
+        <div><h4>{{ card.title }}</h4></div>
         <img class="gallery-image" [attr.data-flickity-lazyload]="card.url">
         <div class="image-inscription" [innerHtml]="card.inscription | sgHighlightPipe: [word]"></div>
     </div>

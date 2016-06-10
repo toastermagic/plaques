@@ -44,9 +44,8 @@
     padding: 20px;
     margin-bottom: 10px;
     text-align: left;
-    max-width: 100%;
-    max-height: 40%; 
     overflow-y: auto;
+    display: flex 1 1 auto;
 }
 
 .highlighted {

@@ -63,15 +63,24 @@ function analyseArray(plaques) {
         wordsplit.forEach((w) => {
             if (w.length > 2) {
                 if (!freqMap[w]) {
-                    freqMap[w] = [{ id: p.id, url: p.main_photo, inscription: p.inscription }];
+                    freqMap[w] = [getPlaque(p)];
                 } else {
-                    freqMap[w].push({ id: p.id, url: p.main_photo, inscription: p.inscription });
+                    freqMap[w].push(getPlaque(p));
                 }
             }
         });
     });
 
     return freqMap;
+}
+
+function getPlaque(plaque) {
+    return {
+        id: plaque.id,
+        url: plaque.main_photo,
+        inscription: plaque.inscription,
+        title: plaque.title
+    };
 }
 
 function analyseAll(plaques) {
