@@ -34,6 +34,75 @@ export default (path) => {
     var ready = false;
     var excludeList = [];
 
+    function parseFile(filePath) {
+        var p = new Promise<any>((res, rej) => {
+            console.log('parsing csv file', filePath);
+            var plaqueList = [];
+            var parser = parse({ delimiter: ',' }, (err, data) => {
+                if (err) {
+                    rej(err);
+                    return;
+                }
+
+                var cols = data[0];
+                for (var index = 1; index < data.length; index++) {
+                    var newPlaque: any = _.object(cols, data[index]);
+
+                    if (!newPlaque.main_photo
+                        || !newPlaque.erected
+                        || newPlaque.erected.startsWith('16')
+                        || newPlaque.erected.startsWith('17')
+                        || newPlaque.erected.startsWith('18')) {
+                        continue;
+                    }
+
+                    newPlaque.search_key = getSearchKey(newPlaque);
+                    newPlaque.erected_decade = newPlaque.erected.substring(0, 3) + '0';
+                    plaqueList.push(newPlaque);
+                };
+
+                res(plaqueList);
+            });
+
+            fs.createReadStream(filePath).pipe(parser);
+        });
+
+        return p;
+    }
+
+    function readParsedFile(filepath) {
+        var p = new Promise<any>((res, rej) => {
+            console.log('reading json file', filepath);
+            fs.readFile(filepath, (err, data) => {
+                if (err) {
+                    rej(err);
+                } else {
+                    let plaqueArray: any[] = JSON.parse(data);
+                    res(plaqueArray);
+                }
+            });
+        });
+
+        return p;
+    }
+
+    function writeJson(filePath, data) {
+        var p = new Promise((res, rej) => {
+            console.log('writing json file', filePath);
+            fs.writeFile(filePath, JSON.stringify(data), (writeErr) => {
+                if (!writeErr) {
+                    console.log('parsed file written ok');
+                    res();
+                } else {
+                    console.log('failed to write parsed file', writeErr);
+                    rej(writeErr);
+                }
+            });
+        });
+
+        return p;
+    }
+
     function keyDescription(key) {
         switch (key) {
             case '1900':
@@ -42,7 +111,7 @@ export default (path) => {
                 return '1910 - 1920, tablets and erections are prevalent';
             case '1920':
                 return 'The roaring twenties were mainly characterised ' +
-                        'by the veneration of bridges';
+                    'by the veneration of bridges';
             case '1930':
                 return 'John and George seem to be popular names';
             case '1940':
@@ -57,7 +126,7 @@ export default (path) => {
                 return 'Manchester was a very popular place to be in the 80s';
             case '1990':
                 return 'The words \'school\', \'world\' and \'pioneer\' all feature' +
-                        'for the first time';
+                    'for the first time';
             case '2000':
                 return 'A century is celebrated, and the renaissance of Leeds begins';
             case '2010':
@@ -75,21 +144,6 @@ export default (path) => {
 
     function getSearchKey(obj) {
         return (obj.inscription).toLowerCase();
-    }
-
-    function readParsedFile(filepath) {
-        var p = new Promise<any>((res, rej) => {
-            fs.readFile(filepath, (err, data) => {
-                if (err) {
-                    rej(err);
-                } else {
-                    plaques = JSON.parse(data);
-                    res(plaques);
-                }
-            });
-        });
-
-        return p;
     }
 
     function generateExcludeList() {
@@ -128,57 +182,30 @@ export default (path) => {
 
             fileExists(path + 'plaques.parsed.json')
                 .then((found) => {
-                    if (found) {
-                        console.log('found pre-parsed data');
-                        readParsedFile(path + 'plaques.parsed.json')
-                            .then((data) => {
-                                plaques = data;
-                                console.log('data read:', plaques.length, 'plaques');
+                    var promise = found
+                        ? readParsedFile(path + 'plaques.parsed.json')
+                        : parseFile(path + 'open-plaques-United-Kingdom-2016-05-22.csv');
 
-                                generateExcludeList();
-                            });
-                    } else {
-                        var parser = parse({ delimiter: ',' }, function (err, data) {
-                            var cols = data[0];
-                            for (var index = 1; index < data.length; index++) {
-                                var newPlaque: any = _.object(cols, data[index]);
-                                if (newPlaque.main_photo) {
-                                    newPlaque.search_key = getSearchKey(newPlaque);
-                                    plaques.push(newPlaque);
-                                }
+                    promise
+                        .then((data) => {
+                            plaques = data;
+                            console.log('plaques ready:', plaques.length, 'plaques');
+
+                            if (!found) {
+                                // we've read & processed it, now save it for next time
+                                return writeJson(path + 'plaques.parsed.json', data);
+                            } else {
+                                return Promise.resolve();
                             }
-
+                        })
+                        .then((data) => {
                             generateExcludeList();
-
-                            fs.writeFile(path + 'plaques.parsed.json',
-                                JSON.stringify(plaques), (writeErr) => {
-                                    if (!err) {
-                                        console.log('parsed file written ok');
-                                    } else {
-                                        console.log('failed to write parsed file', writeErr);
-                                    }
-                                });
                         });
-
-                        fs.createReadStream(path + 'open-plaques-all-2016-05-22.csv').pipe(parser);
-                    }
                 });
         },
         tags: function () {
-            var tagPlaques = _.filter(plaques, function (p) {
-                if (!p.erected
-                    || p.erected.startsWith('16')
-                    || p.erected.startsWith('17')
-                    || p.erected.startsWith('18')) {
-                    return;
-                }
-
-                p.erected_decade = p.erected.substring(0, 3) + '0';
-                return p.inscription && p.erected;
-            });
-
             var clouds = cloud.cloudThis(
-                tagPlaques,
+                plaques,
                 'id',
                 'erected_decade',
                 'inscription',
