@@ -1,4 +1,5 @@
 import {ChangeDetectorRef,
+  ViewChild,
   ViewEncapsulation,
   Component,
   OnInit,
@@ -27,6 +28,8 @@ const cloud: any = require('d3-cloud');
 export class TagsComponent implements OnInit, OnDestroy {
   private data: any;
   private subscription: Subscription;
+
+  @ViewChild('carousel') carousel;
 
   hand: any = [];
   word: string;
@@ -79,8 +82,11 @@ export class TagsComponent implements OnInit, OnDestroy {
 
   showYear = (year) => {
     this.selectedYear = year;
-
-    this.makeCloud(year);
+    if (this.carousel) {
+      this.carousel.close();
+    } else {
+      this.makeCloud(year);
+    }
   }
 
   makeCloud = (year?) => {

@@ -1,6 +1,6 @@
 <md-content layout="column" layout-fill layout-align="start center" style="overflow:hidden">
   <div style="position:absolute; width:100%; z-index: 2" [ngStyle]="{top: handTop}">
-    <sg-carousel *ngIf="hand.length > 0" (onClose)="carouselClose()" [hand]="hand" [word]="word"></sg-carousel>
+    <sg-carousel #carousel *ngIf="hand.length > 0" (onClose)="carouselClose()" [hand]="hand" [word]="word"></sg-carousel>
   </div>
   <div layout="column" layout-fill layout-align="start start" onselectstart="return false">
     <div style="flex: 1 1 auto">
@@ -8,9 +8,9 @@
       </div>
     </div>
     <div layout="row" layout-align="center" style="width:100%">
-      <div layout="row" layout-align="center center" *ngIf="years" style="overflow-x:auto; padding: 5px">
-        <div *ngFor="let year of years">
-          <button md-fab class="md-raised" style="margin:0 5px;" (click)="showYear(year)" [ngClass]="{'md-primary': year !== selectedYear, 'md-mini': year !== selectedYear}">
+      <div layout="row" layout-align="center center" *ngIf="years" style="overflow-x:auto; padding: 5px; height: 75px">
+        <div *ngFor="let year of years" style="text-align:center">
+          <button md-fab class="md-raised decade-button" style="margin:0 5px;" (click)="showYear(year)" [ngClass]="{'md-primary': year !== selectedYear, 'md-mini': year !== selectedYear}">
             <div class="fab-text">{{ year.key }}</div>
           </button>
         </div>

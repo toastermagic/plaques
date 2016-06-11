@@ -26,3 +26,8 @@
   -o-transition: none !important;
   transition: none !important;
 }
+
+.decade-button {
+    transition: all 250ms ease-in-out;
+    -webkit-transition: all 250ms ease-in-out;
+}
