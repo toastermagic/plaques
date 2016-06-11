@@ -1,5 +1,5 @@
 <md-content layout="column" layout-fill layout-align="start center" style="overflow:hidden">
-  <div style="position:absolute; width:100%; z-index: 2" [ngStyle]="{top: handTop}">
+  <div style="position:absolute; width:100%; z-index: 99" [ngStyle]="{top: handTop}">
     <sg-carousel #carousel *ngIf="hand.length > 0" (onClose)="carouselClose()" [hand]="hand" [word]="word"></sg-carousel>
   </div>
   <div layout="column" layout-fill layout-align="start start" onselectstart="return false">

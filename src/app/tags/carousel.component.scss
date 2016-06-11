@@ -1,3 +1,12 @@
+.card-title {
+    text-align: center;
+    font-size: larger;
+    margin: 10px;
+    height: 10%;
+    max-height: 10%;
+    overflow-y: hidden;
+}
+
 .close-button {
     position: absolute; 
     right: 50px; 
@@ -19,7 +28,7 @@
 .gallery {
     transition: opacity 0.4s;
     opacity: 0;
-    height: 50vh;
+    height: 75vh;
     width: 100%;
     background: #eee;
 }
@@ -45,7 +54,9 @@
     margin-bottom: 10px;
     text-align: left;
     overflow-y: auto;
-    display: flex 1 1 auto;
+    // display: flex 1 1 auto;
+    height: 40%;
+    max-height: 40%;
 }
 
 .highlighted {
