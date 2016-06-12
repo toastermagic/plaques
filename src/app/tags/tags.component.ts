@@ -13,6 +13,7 @@ import {Subscription} from 'rxjs/Subscription';
 import {Subject} from 'rxjs/Subject';
 import {HighlightPipe, PlaqueService} from '../shared';
 import {CarouselComponent} from './carousel.component';
+import {MapComponent} from '../map';
 
 const cloud: any = require('d3-cloud');
 
@@ -22,7 +23,7 @@ const cloud: any = require('d3-cloud');
   template: require('./tags.component.html'),
   styles: [require('./tags.component.scss')],
   pipes: [HighlightPipe],
-  directives: [MATERIAL_DIRECTIVES, MD_SIDENAV_DIRECTIVES, CarouselComponent],
+  directives: [MATERIAL_DIRECTIVES, MD_SIDENAV_DIRECTIVES, CarouselComponent, MapComponent ],
   encapsulation: ViewEncapsulation.None
 })
 export class TagsComponent implements OnInit, OnDestroy {
@@ -33,6 +34,8 @@ export class TagsComponent implements OnInit, OnDestroy {
 
   hand: any = [];
   word: string;
+
+  mapCoords: any = { latitude: 0, longitude: 0 };
 
   onDeal: Subject<any> = new Subject<any>();
   onWordCloud = new Subject<any>();
@@ -69,6 +72,11 @@ export class TagsComponent implements OnInit, OnDestroy {
       .subscribe((words) => {
         this.write(words);
       });
+  }
+
+  carouselSelect = (plaque) => {
+    this.mapCoords.latitude = plaque.coords.latitude;
+    this.mapCoords.longitude = plaque.coords.longitude;
   }
 
   onWordClick = (word) => {

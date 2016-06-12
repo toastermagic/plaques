@@ -1,12 +1,12 @@
-/// <reference path="../../../typings/main/index.d.ts"/>
-
 import * as path from 'path';
 // const webpack = require('webpack');
 var htmlWebpackPlugin = require('html-webpack-plugin');
 var copyWebpackPlugin = require('copy-webpack-plugin');
+var definePlugin = require('webpack/lib/DefinePlugin');
 // const dedupePlugin = require('webpack/lib/optimize/dedupePlugin');
 
 // const helpers = require('./helpers');
+var gmapsApi = require('./googlemaps.json');
 
 const METADATA = {
     title: 'datavis',
@@ -133,7 +133,11 @@ module.exports = {
                 collapseWhitespace: false
             }
         }),
-        // new copyWebpackPlugin([
+        new definePlugin({
+        //  these need to be referenced in typings.d.ts
+        'GMAPS_API_KEY': '"' + gmapsApi.key + '"'
+        }),
+        new copyWebpackPlugin([
         //     // Copy directory contents to {output}/to/directory/ 
         //     { from: 'node_modules/ng2-material/ng2-material.css',
         //         to: 'node_modules/ng2-material/' },
@@ -141,8 +145,8 @@ module.exports = {
         //         to: 'node_modules/animate.css/' },
         //     { from: 'node_modules/flickity/dist/flickity.css',
         //         to: 'node_modules/flickity/dist' },
-        //     { from: 'node_modules/flickity/dist/flickity.pkgd.js',
-        //         to: 'node_modules/flickity/dist' }
-        // ])
+            { from: 'server/config/webpack/googlemaps.json',
+                to: 'server/config/webpack/googlemaps.json' }
+        ])
     ]
 };

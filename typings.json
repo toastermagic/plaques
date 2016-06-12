@@ -13,6 +13,8 @@
     "express-serve-static-core": "registry:dt/express-serve-static-core#0.0.0+20160322035842",
     "firebase": "registry:dt/firebase#2.4.1+20160412125105",
     "flickity": "registry:dt/flickity#1.1.1+20160220210120",
+    "google-maps": "registry:dt/google-maps#3.1.0+20151203174025",
+    "google.maps": "registry:dt/google.maps#3.20.0+20160414124451",
     "jasmine": "registry:dt/jasmine#2.2.0+20160412134438",
     "lodash": "registry:dt/lodash#3.10.0+20160330154726",
     "mime": "registry:dt/mime#0.0.0+20160316155526",

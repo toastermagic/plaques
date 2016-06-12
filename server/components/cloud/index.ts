@@ -79,7 +79,11 @@ function getPlaque(plaque) {
         id: plaque.id,
         url: plaque.main_photo,
         inscription: plaque.inscription,
-        title: plaque.title
+        title: plaque.title,
+        coords: {
+            latitude: plaque.latitude,
+            longitude: plaque.longitude
+        }
     };
 }
 

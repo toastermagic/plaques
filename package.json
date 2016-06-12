@@ -33,6 +33,7 @@
     "@angular2-material/radio": "^2.0.0-alpha.4",
     "@angular2-material/sidenav": "^2.0.0-alpha.4",
     "@angular2-material/toolbar": "^2.0.0-alpha.4",
+    "angular2-google-maps": "^0.10.0",
     "body-parser": "^1.15.0",
     "classie": "^1.0.0",
     "csv-parse": "^1.1.0",

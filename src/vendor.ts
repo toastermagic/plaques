@@ -19,3 +19,5 @@ import '@angular2-material/input';
 import '@angular2-material/toolbar';
 
 import 'ng2-material';
+
+import 'angular2-google-maps/core';

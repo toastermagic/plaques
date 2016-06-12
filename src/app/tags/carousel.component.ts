@@ -23,6 +23,9 @@ export class CarouselComponent implements OnInit, OnChanges {
     @Output()
     onClose = new EventEmitter<void>();
 
+    @Output()
+    onSelected = new EventEmitter<any>();
+
     flickity: Flickity;
     galleryOpen = false;
 
@@ -46,10 +49,15 @@ export class CarouselComponent implements OnInit, OnChanges {
 
     flickitise() {
         this.flickity = new flick('.gallery', {
-            initialIndex: this.hand.length > 1 ? 1 : 0,
+            initialIndex: 0,
             lazyLoad: 5,
-            contain: true,
+            contain: false,
             useSetGallerySize: false
+        });
+
+        this.flickity.on('cellSelect', () => {
+            let plaque = this.hand[this.flickity.selectedIndex];
+            this.onSelected.emit(plaque);
         });
 
         setTimeout(() => {
