@@ -1,14 +1,19 @@
-import { Input, Component, OnInit } from '@angular/core';
-import { SebmGoogleMap, SebmGoogleMapMarker } from 'angular2-google-maps/core';
+import { Input, OnChanges, Component, OnInit } from '@angular/core';
+import { ANGULAR2_GOOGLE_MAPS_DIRECTIVES } from 'angular2-google-maps/core';
 
 @Component({
     moduleId: 'app/map/',
     selector: 'sg-map',
     template: require('./map.component.html'),
     styles: [require('./map.component.scss')],
-    directives: [SebmGoogleMap, SebmGoogleMapMarker]
+    directives: [ANGULAR2_GOOGLE_MAPS_DIRECTIVES]
 })
-export class MapComponent implements OnInit {
+export class MapComponent implements OnInit, OnChanges {
+
+    marker = {
+        latitude: 0,
+        longitude: 0
+    };
 
     @Input()
     latitude: number;
@@ -20,9 +25,14 @@ export class MapComponent implements OnInit {
     }
 
     ngOnInit() {
-        // let marker = new SebmGoogleMapMarker(this.mm);
-        // marker.latitude = this.latitude;
-        // marker.longitude = this.longitude;
-        // this.mm.addMarker(marker);
+    }
+
+    ngOnChanges(change) {
+        if (change.longitude && change.longitude.currentValue) {
+            this.marker.longitude = change.longitude.currentValue;
+        }
+        if (change.latitude && change.latitude.currentValue) {
+            this.marker.latitude = change.latitude.currentValue;
+        }
     }
 }

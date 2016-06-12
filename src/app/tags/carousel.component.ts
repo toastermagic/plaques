@@ -26,6 +26,9 @@ export class CarouselComponent implements OnInit, OnChanges {
     @Output()
     onSelected = new EventEmitter<any>();
 
+    @Output()
+    onShowMap = new EventEmitter<void>();
+
     flickity: Flickity;
     galleryOpen = false;
 
@@ -38,6 +41,13 @@ export class CarouselComponent implements OnInit, OnChanges {
         setTimeout(() => {
             this.flickitise();
         }, 0);
+    }
+
+    showMap() {
+        this.onShowMap.emit(null);
+        setTimeout(() => {
+            this.flickity.resize();
+        }, 500);
     }
 
     close() {

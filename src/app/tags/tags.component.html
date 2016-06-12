@@ -1,16 +1,16 @@
-<md-content layout="column" layout-fill layout-align="start center" style="overflow:hidden">
+<md-sidenav-layout style="height: 100vh; width: 100vw;">
+  <md-sidenav #mapNav style="width: 33vw;" mode="side">
+      <sg-map [latitude]="mapCoords.latitude" [longitude]="mapCoords.longitude" style="height:100%; width: 100%"></sg-map>
+  </md-sidenav>
+
   <div style="position:absolute; width:100%; z-index: 99" [ngStyle]="{top: handTop}">
-    <sg-carousel #carousel *ngIf="hand.length > 0" (onSelected)="carouselSelect($event)" (onClose)="carouselClose()" [hand]="hand" [word]="word"></sg-carousel>
+    <sg-carousel #carousel *ngIf="hand.length > 0" (onShowMap)="mapNav.toggle()" (onSelected)="carouselSelect($event)" (onClose)="carouselClose()" [hand]="hand" [word]="word"></sg-carousel>
   </div>
-  <div *ngIf="hand.length > 0" style="position: absolute; z-index:999; height:100vh; width:33vw">
-    <sg-map [latitude]="mapCoords.latitude" [longitude]="mapCoords.longitude" style="width: 100%"></sg-map>
-  </div>
-  <div layout="column" layout-fill layout-align="start start" onselectstart="return false">
-    <div style="flex: 1 1 auto">
-      <div id="d3div">
-      </div>
+
+  <md-content style="display: flex; height: 100vh;" layout-align="end end" onselectstart="return false">
+    <div id="d3div">
     </div>
-    <div layout="row" layout-align="center" style="width:100%">
+    <div layout="row" layout-align="center" style="width:100%; min-height: 75px">
       <div layout="row" layout-align="center center" *ngIf="years" style="overflow-x:auto; padding: 5px; height: 75px">
         <div *ngFor="let year of years" style="text-align:center">
           <button md-fab class="md-raised decade-button" style="margin:0 5px;" (click)="showYear(year)" [ngClass]="{'md-primary': year !== selectedYear, 'md-mini': year !== selectedYear}">
@@ -19,8 +19,8 @@
         </div>
       </div>
     </div>
-    <div class="decade-description" layout="row" layout-align="center center" *ngIf="selectedYear">
+    <!--<div class="decade-description" layout="row" layout-align="center center" *ngIf="selectedYear">
       {{ selectedYear.description }}
-    </div>
-  </div>
-</md-content>
+    </div>-->
+  </md-content>
+</md-sidenav-layout>

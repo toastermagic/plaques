@@ -31,6 +31,7 @@ export class TagsComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
 
   @ViewChild('carousel') carousel;
+  @ViewChild('mapNav') mapNav;
 
   hand: any = [];
   word: string;
@@ -122,7 +123,7 @@ export class TagsComponent implements OnInit, OnDestroy {
   carouselClose() {
     this.hand = [];
     this.word = '';
-
+    this.mapNav.close();
     this.makeCloud(this.selectedYear);
   }
 
