@@ -14,7 +14,7 @@ module.exports = {
             });
 
         let sorted = _.sortBy(words, (w: any) => w.plaqueCount * -1);
-        let topList = _.first(sorted, topN).map((w) => w.word);
+        let topList = _.first(sorted, topN).map((w: any) => w.word);
 
         return topList;
     },
