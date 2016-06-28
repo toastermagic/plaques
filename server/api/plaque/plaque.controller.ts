@@ -58,7 +58,7 @@ exports.tweets = function (req, res) {
         location.longitude)
         .then((tweets) => {
             if (tweets && tweets.statuses && tweets.statuses.length) {
-                let tweetIds = _(tweets.statuses).map((tweet) => tweet.id_str);
+                let tweetIds = _(tweets.statuses).map((tweet: any) => tweet.id_str);
                 res.json(tweetIds);
             }
         });
