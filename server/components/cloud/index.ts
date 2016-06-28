@@ -13,7 +13,7 @@ module.exports = {
                 };
             });
 
-        let sorted = _.sortBy(words, (w) => w.plaqueCount * -1);
+        let sorted = _.sortBy(words, (w: any) => w.plaqueCount * -1);
         let topList = _.first(sorted, topN).map((w) => w.word);
 
         return topList;
