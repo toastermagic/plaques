@@ -83,7 +83,8 @@ function getPlaque(plaque) {
         coords: {
             latitude: plaque.latitude,
             longitude: plaque.longitude
-        }
+        },
+        subject: plaque.lead_subject_name
     };
 }
 

@@ -29,10 +29,11 @@ export class MapComponent implements OnInit, OnChanges {
 
     ngOnChanges(change) {
         if (change.longitude && change.longitude.currentValue) {
-            this.marker.longitude = change.longitude.currentValue;
+            console.log('long', change.longitude);
+            this.marker.longitude = +change.longitude.currentValue;
         }
         if (change.latitude && change.latitude.currentValue) {
-            this.marker.latitude = change.latitude.currentValue;
+            this.marker.latitude = +change.latitude.currentValue;
         }
     }
 }

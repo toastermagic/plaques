@@ -16,6 +16,19 @@ export class PlaqueService {
     var url = this.prefix + '/api/plaque/tags/';
     return this.http.get(url).map((res: Response) => res.json()).catch(this.handleError);
   }
+  tweets(subject, location) {
+    var codedSubject = encodeURI(subject);
+    var codedLocation = encodeURI(JSON.stringify(location));
+    var url = this.prefix + '/api/plaque/tweets/' +
+                            '?subject=' + codedSubject + '&location=' + codedLocation;
+
+    return this.http.get(url).map((res: Response) => res.json()).catch(this.handleError);
+  }
+  tweet(tweetId) {
+    var url = this.prefix + '/api/plaque/tweet/' + tweetId;
+
+    return this.http.get(url).map((res: Response) => res.json()).catch(this.handleError);
+  }
   getPlaques(searchTerm) {
     var url = this.prefix + '/api/plaque/search/' + searchTerm;
     return this.http.get(url).map((res: Response) => res.json()).catch(this.handleError);

@@ -50,5 +50,7 @@ export default (PORT) => {
     server.listen(PORT, function (err) {
         console.log('express listening on port ' + PORT);
     });
+
+    return server;
 }
 

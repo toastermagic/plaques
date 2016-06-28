@@ -32,6 +32,7 @@ module.exports = {
             //    'angular2/bundles/angular2-polyfills',
             'd3-cloud',
             'ng2-material',
+            'twitter-widgets',
 
             '@angular2-material/core',
             '@angular2-material/checkbox',
@@ -114,7 +115,7 @@ module.exports = {
 
     tslint: {
         emitErrors: true,
-        failOnHint: true,
+        failOnHint: false,
         resourcePath: 'src',
         rulesDirectory: 'node_modules/codelyzer'
     },

@@ -1,17 +1,20 @@
-import {EventEmitter, Input, Output, Component, OnInit, OnChanges } from '@angular/core';
+import {ViewChild, EventEmitter, Input, Output, Component, OnInit, OnChanges } from '@angular/core';
 import {HighlightPipe} from '../shared';
 import {MdIcon} from 'ng2-material';
+import {PlaqueService} from '../shared';
 
 import '../../../node_modules/flickity/dist/flickity.css';
+
 var flick = require('flickity');
+var twitterWidgetsLoader = require('twitter-widgets');
 
 @Component({
     moduleId: '/app/tags/',
     selector: 'sg-carousel',
     template: require('./carousel.component.html'),
-    styles : [require('./carousel.component.scss')],
+    styles: [require('./carousel.component.scss')],
     pipes: [HighlightPipe],
-    directives: [ MdIcon ]
+    directives: [MdIcon]
 })
 export class CarouselComponent implements OnInit, OnChanges {
     @Input()
@@ -30,9 +33,15 @@ export class CarouselComponent implements OnInit, OnChanges {
     onShowMap = new EventEmitter<void>();
 
     flickity: Flickity;
-    galleryOpen = false;
+    twitter: Twitter = twitterWidgetsLoader;
 
-    constructor() {}
+    galleryOpen = false;
+    currentPlaque: any;
+
+    @ViewChild('tweet')
+    embeddedTweet: any;
+
+    constructor(private ps: PlaqueService) { }
 
     ngOnInit() { }
 
@@ -57,7 +66,7 @@ export class CarouselComponent implements OnInit, OnChanges {
         }, 250);
     }
 
-    flickitise() {
+    flickitise = () => {
         this.flickity = new flick('.gallery', {
             initialIndex: 0,
             lazyLoad: 5,
@@ -65,9 +74,45 @@ export class CarouselComponent implements OnInit, OnChanges {
             useSetGallerySize: false
         });
 
+        let tweetElement = this.embeddedTweet;
+
         this.flickity.on('cellSelect', () => {
-            let plaque = this.hand[this.flickity.selectedIndex];
-            this.onSelected.emit(plaque);
+            let index = this.flickity.selectedIndex;
+            let plaque = this.hand[index];
+            if (!this.currentPlaque || this.currentPlaque.id !== plaque.id) {
+                this.currentPlaque = plaque;
+
+                this.onSelected.emit(plaque);
+
+                if (!plaque.subject) {
+                    return;
+                }
+
+                this.ps
+                    .tweets(plaque.subject, plaque.coords)
+                    // .map((tweet) => {
+                    //     if (!tweet[0] || !tweet[0].body) {
+                    //         return;
+                    //     }
+
+                    //     let obj = JSON.parse(tweet[0].body);
+
+                    //     return obj;
+                    // })
+                    .subscribe((tweet) => {
+                        if (!tweet) {
+                            return;
+                        }
+
+                        console.log('tweet', tweet[0]);
+                        // this.tweet = tweet;
+                        twitterWidgetsLoader.load(function (twttr) {
+                            twttr.widgets.createTweet(tweet[0],
+                            document.getElementById('tweet' + index));
+                            // tweetElement.nativeElement);
+                        });
+                    });
+            }
         });
 
         setTimeout(() => {
